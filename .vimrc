@@ -1,10 +1,20 @@
-call pathogen#infect()
-syntax on
+set nocompatible
+filetype off
+
+set rtp+=~/dotfiles/.vim/bundle/vundle/
+call vundle#rc()
+
+Bundle 'gmarik/vundle'
+Bundle 'nanotech/jellybeans.vim'
+Bundle 'davidhalter/jedi-vim'
+Bundle 'sjl/gundo'
+Bundle 'kien/ctrlp.vim'
+Bundle 'benmills/vimux'
+
 filetype plugin indent on
 
 colorscheme jellybeans
 
-set nocompatible
 set autochdir
 set noautoread " tells vim not to automatically reload changed files
 set rnu "" relative line numbers
