@@ -1,15 +1,18 @@
 set nocompatible
 filetype off
 
-set rtp+=~/dotfiles/.vim/bundle/vundle/
+set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 
 Bundle 'gmarik/vundle'
 Bundle 'nanotech/jellybeans.vim'
-Bundle 'davidhalter/jedi-vim'
-Bundle 'sjl/gundo'
+Bundle 'sjl/gundo.vim'
 Bundle 'kien/ctrlp.vim'
 Bundle 'benmills/vimux'
+
+if version >= 701
+  Bundle 'davidhalter/jedi-vim'
+endif
 
 filetype plugin indent on
 
@@ -17,7 +20,6 @@ colorscheme jellybeans
 
 set autochdir
 set noautoread " tells vim not to automatically reload changed files
-set rnu "" relative line numbers
 set modeline
 set scrolloff=6 "" keep cursor away from edge
 set visualbell "" no beep
@@ -40,13 +42,17 @@ set wildmenu "" enhanced command completion
 set wildmode=list:longest
 set wildignore+=*.swp,*.bak,*.pyc,*.class,*.pdf,*.aux,*.toc,*.lof,*.lot,*.tdo,*.out,*.png,*.o,*.obj,.git,.svn,*.avi,*.zip,*.rar,*.doc,*.tar,*.jpg,*git*,*.gz,*.djvu,*~*,*.log,*.nav,*.snm,*.sig,*.avi,*.xls,*.pdf,*.aux,*.log,*.docx,*latexmk,*.rtf,*.ipe
 set nowrap
-set undodir=~/undo
-set undofile
 set undolevels=2048
 set t_Co=256
 set splitbelow
 set splitright
 set diffopt=vertical,filler,context:1000000 
+
+if version >= 701
+  set rnu "" relative line numbers
+  set undodir=~/undo
+  set undofile
+endif
 
 let mapleader = ','
 let filetype_m="mma"
