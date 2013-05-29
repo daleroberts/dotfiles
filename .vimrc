@@ -9,6 +9,7 @@ Bundle 'nanotech/jellybeans.vim'
 Bundle 'sjl/gundo.vim'
 Bundle 'kien/ctrlp.vim'
 Bundle 'benmills/vimux'
+Bundle 'godlygeek/tabular'
 
 if version >= 701
   Bundle 'davidhalter/jedi-vim'
@@ -47,6 +48,7 @@ set t_Co=256
 set splitbelow
 set splitright
 set diffopt=vertical,filler,context:1000000 
+set mouse=a
 
 if version >= 701
   set rnu "" relative line numbers
@@ -101,4 +103,5 @@ endfunction
 com! DiffSaved call DoDiffSaved()
 map <Leader>ds :DiffSaved<CR>
 
+autocmd FileType python setlocal tw=0 expandtab shiftwidth=4 tabstop=8 formatoptions+=croq softtabstop=4 autoindent textwidth=79 
 autocmd FileType python map <Leader>f :w<CR>:%!autopep8 %<CR>
