@@ -49,6 +49,7 @@ set splitbelow
 set splitright
 set diffopt=vertical,filler,context:1000000 
 set mouse=a
+set fillchars=vert:\│
 
 if version >= 701
   set rnu "" relative line numbers
