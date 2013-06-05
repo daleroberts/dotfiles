@@ -10,6 +10,7 @@ Bundle 'sjl/gundo.vim'
 Bundle 'kien/ctrlp.vim'
 Bundle 'benmills/vimux'
 Bundle 'godlygeek/tabular'
+Bundle 'scrooloose/syntastic'
 
 if version >= 701
   Bundle 'davidhalter/jedi-vim'
@@ -70,6 +71,8 @@ let g:jedi#show_function_definition = "0"
 let g:ultisnips_python_style="sphinx"
 let g:syntastic_cpp_compiler = 'g++-4.7'
 let g:syntastic_cpp_compiler_options = ' -std=c++0x'
+let g:syntastic_check_on_open=1
+let g:syntastic_python_checker="flake8"
 
 nnoremap ; :
 nnoremap <silent> <C-l> :nohl<CR><C-l>
