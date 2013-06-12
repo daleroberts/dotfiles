@@ -10,9 +10,10 @@ Bundle 'sjl/gundo.vim'
 Bundle 'kien/ctrlp.vim'
 Bundle 'benmills/vimux'
 Bundle 'godlygeek/tabular'
-Bundle 'scrooloose/syntastic'
+Bundle 'airblade/vim-gitgutter'
 
 if version >= 701
+  Bundle 'scrooloose/syntastic'
   Bundle 'davidhalter/jedi-vim'
 endif
 
@@ -72,7 +73,7 @@ let g:ultisnips_python_style="sphinx"
 let g:syntastic_cpp_compiler = 'g++-4.7'
 let g:syntastic_cpp_compiler_options = ' -std=c++0x'
 let g:syntastic_check_on_open=1
-let g:syntastic_python_checker="flake8"
+let g:syntastic_python_checkers=["flake8"]
 
 nnoremap ; :
 nnoremap <silent> <C-l> :nohl<CR><C-l>
