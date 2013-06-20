@@ -15,6 +15,7 @@ if version >= 701
 endif
 
 filetype plugin indent on
+syntax on
 
 colorscheme jellybeans
 
