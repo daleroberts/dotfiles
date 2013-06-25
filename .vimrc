@@ -11,11 +11,8 @@ Bundle 'kien/ctrlp.vim'
 Bundle 'benmills/vimux'
 Bundle 'godlygeek/tabular'
 Bundle 'airblade/vim-gitgutter'
-
-if version >= 701
-  Bundle 'scrooloose/syntastic'
-  Bundle 'davidhalter/jedi-vim'
-endif
+Bundle 'scrooloose/syntastic'
+Bundle 'davidhalter/jedi-vim'
 
 filetype plugin indent on
 syntax on
