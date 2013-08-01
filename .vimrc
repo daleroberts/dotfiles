@@ -17,7 +17,7 @@ Bundle 'MarcWeber/vim-addon-mw-utils'
 Bundle 'tomtom/tlib_vim'
 Bundle 'garbas/vim-snipmate'
 Bundle 'daleroberts/vim-snippets'
-Bundle 'pydave/AsyncCommand'
+"Bundle 'pydave/AsyncCommand'
 
 filetype plugin indent on
 syntax on
