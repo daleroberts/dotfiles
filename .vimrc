@@ -78,6 +78,7 @@ let g:syntastic_cpp_compiler = 'g++-4.7'
 let g:syntastic_cpp_compiler_options = ' -std=c++0x'
 let g:syntastic_check_on_open=1
 let g:syntastic_python_checkers=["flake8"]
+let g:syntastic_matlab_checkers=["mlint"]
 
 nnoremap ; :
 nnoremap <silent> <C-l> :nohl<CR><C-l>
@@ -112,5 +113,6 @@ endfunction
 com! DiffSaved call DoDiffSaved()
 map <Leader>ds :DiffSaved<CR>
 
+autocmd FileType r setlocal tw=0 expandtab shiftwidth=2 tabstop=8 formatoptions+=croq softtabstop=2 autoindent textwidth=79 
 autocmd FileType python setlocal tw=0 expandtab shiftwidth=4 tabstop=8 formatoptions+=croq softtabstop=4 autoindent textwidth=79 
 autocmd FileType python map <Leader>f :w<CR>:%!autopep8 %<CR>
