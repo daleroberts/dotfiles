@@ -8,16 +8,16 @@ Bundle 'gmarik/vundle'
 Bundle 'nanotech/jellybeans.vim'
 Bundle 'sjl/gundo.vim'
 Bundle 'kien/ctrlp.vim'
-Bundle 'benmills/vimux'
 Bundle 'godlygeek/tabular'
 Bundle 'airblade/vim-gitgutter'
 Bundle 'scrooloose/syntastic'
 Bundle 'davidhalter/jedi-vim'
-Bundle 'MarcWeber/vim-addon-mw-utils'
+Bundle 'ervandew/supertab'
+
 Bundle 'tomtom/tlib_vim'
+Bundle 'MarcWeber/vim-addon-mw-utils'
 Bundle 'garbas/vim-snipmate'
 Bundle 'daleroberts/vim-snippets'
-"Bundle 'pydave/AsyncCommand'
 
 filetype plugin indent on
 syntax on
@@ -71,14 +71,16 @@ let g:gundo_width = 30
 let g:gundo_right = 1
 let g:tex_flavor='latex'
 let g:jedi#use_tabs_not_buffers = 0
-let g:jedi#popup_on_dot = 0
+let g:jedi#popup_on_dot = 1
 let g:jedi#show_function_definition = "0"
 let g:ultisnips_python_style="sphinx"
 let g:syntastic_cpp_compiler = 'g++-4.7'
 let g:syntastic_cpp_compiler_options = ' -std=c++0x'
 let g:syntastic_check_on_open=1
-let g:syntastic_python_checkers=["flake8"]
+"let g:syntastic_python_checkers=["flake8"]
+let g:syntastic_python_checkers=["pylint"]
 let g:syntastic_matlab_checkers=["mlint"]
+let g:SuperTabDefaultCompletionType = "context"
 
 nnoremap ; :
 nnoremap <silent> <C-l> :nohl<CR><C-l>
