@@ -5,7 +5,13 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 
 Bundle 'gmarik/vundle'
+
 Bundle 'nanotech/jellybeans.vim'
+Bundle 'endel/vim-github-colorscheme'
+Bundle 'junegunn/seoul256.vim'
+
+Bundle 'guns/xterm-color-table.vim'
+
 Bundle 'sjl/gundo.vim'
 Bundle 'kien/ctrlp.vim'
 Bundle 'godlygeek/tabular'
@@ -22,7 +28,7 @@ Bundle 'daleroberts/vim-snippets'
 filetype plugin indent on
 syntax on
 
-colorscheme jellybeans
+"colorscheme jellybeans
 
 set autochdir
 set noautoread " tells vim not to automatically reload changed files
@@ -54,7 +60,7 @@ set splitbelow
 set splitright
 set diffopt=vertical,filler,context:1000000 
 set mouse=a
-set fillchars=vert:\|
+set fillchars=vert:\│
 set colorcolumn=79
 
 if version >= 701
