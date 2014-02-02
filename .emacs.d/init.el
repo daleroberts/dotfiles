@@ -1,3 +1,13 @@
+(tool-bar-mode 0)
+(setf inhibit-startup-screen t
+      inhibit-startup-message t
+      inhibit-startup-echo-area-message t)
+(set-scroll-bar-mode nil)
+(setf column-number-mode t)
+(setf size-indication-mode t)
+(setf visible-bell t)
+(set-frame-font "Source Code Pro 13")
+
 (setf user-full-name "Dale Roberts")
 (setf user-mail-address "dale.o.roberts@gmail.com")
 
@@ -6,13 +16,30 @@
 
 (setenv "PATH" (concat "/usr/texbin:" (getenv "PATH")))
 
-;; package archives
+;; packages
 
 (package-initialize)
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
+;(add-to-list 'package-archives
+;             '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
+
+(dolist (pkg '(auctex
+               auto-complete      
+               epc
+               epl
+               evil
+               evil-leader
+               fill-column-indicator
+               flycheck
+               git-commit
+               git-gutter
+               jedi
+               key-chord
+               surround
+               undo-tree))
+  (unless (package-installed-p pkg)
+    package-install pkg))
 
 ;; 80 column
 
@@ -33,14 +60,15 @@
               filename-and-process)
         (mark " " (name 16 -1) " " filename)))
 
-;; Undo tree
-
-(require 'undo-tree)
-(global-undo-tree-mode 1)
+; ;; Undo tree
+; 
+; (require 'undo-tree)
+; (global-undo-tree-mode 1)
 
 ;; python
 
-(defun my-prog-mode-hook
+(defun my-prog-mode-hook ()
+  (toggle-truncate-lines 1)
   (setq fill-column 72)
   (set (make-local-variable 'comment-auto-fill-only-comments) t)
   (auto-fill-mode t))
@@ -53,13 +81,19 @@
 ;; quit minibuffer
 
 (defun minibuffer-keyboard-quit ()
-  "Abort recursive edit. In Delete Selection mode, if the mark is active, just deactivate it;
-then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (interactive)
   (if (and delete-selection-mode transient-mark-mode mark-active)
       (setq deactivate-mark  t)
     (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
     (abort-recursive-edit)))
+
+;; buffers
+
+(defadvice next-buffer (after avoid-messages-buffer-in-next-buffer)
+  (when (string-match "^\\*" (buffer-name))
+    (next-buffer)))
+
+(ad-activate 'next-buffer)
 
 ;; evil
 
@@ -76,7 +110,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (setq evil-replace-state-cursor 'box)
 
 (define-key evil-normal-state-map (kbd "<s-return>") 'toggle-frame-fullscreen)
-(define-key evil-normal-state-map (kbd "<SPC>") 'isearch-forward)
+(define-key evil-normal-state-map (kbd "<SPC>") 'evil-search-forward)
+(define-key evil-normal-state-map (kbd "n") 'isearch-repeat-forward)
 (define-key evil-normal-state-map (kbd "Q") 'fill-paragraph)
 (define-key evil-normal-state-map (kbd ";") 'evil-ex)
 (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
@@ -84,6 +119,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-key evil-normal-state-map ",g" 'jedi:goto-definition)
 (define-key evil-normal-state-map (kbd "K") 'jedi:show-doc)
 (define-key evil-visual-state-map (kbd ";") 'evil-ex)
+(define-key evil-visual-state-map (kbd "f") 'indent-region)
 (define-key evil-motion-state-map (kbd ";") 'evil-ex)
 
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
@@ -119,18 +155,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
-;; interface
-
-(set-frame-font "Source Code Pro 13")
-(set-scroll-bar-mode nil)
-(tool-bar-mode 0)
-(setf inhibit-startup-screen t
-      inhibit-startup-message t
-      inhibit-startup-echo-area-message t)
-(setf column-number-mode t)
-(setf size-indication-mode t)
-(setf visible-bell t)
-
 ;; latex
 
 (add-hook 'latex-mode-hook 'flyspell-mode)
@@ -150,6 +174,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(flycheck-info ((t nil)))
+ '(flycheck-error ((t nil)))
+ '(flycheck-warning ((t nil)))
  '(font-latex-subscript-face ((t nil)) t)
  '(font-latex-superscript-face ((t nil)) t))
 
@@ -168,13 +194,17 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (evil-leader/set-key-for-mode 'latex-mode "r" 'TeX-texify)
 
-;;(load "server")
-;;(unless (server-running-p) (server-start))
-
 ;; gitgutter
 
 (global-git-gutter-mode +1)
+(set-face-foreground 'git-gutter:modified "black")
+(set-face-foreground 'git-gutter:added "black")
+(set-face-foreground 'git-gutter:deleted "black")
 
 ;; color theme
 (add-to-list 'custom-theme-load-path "~/.emacs.d")
 (load-theme 'dr t)
+
+;; server
+(load "server")
+(unless (server-running-p) (server-start))
