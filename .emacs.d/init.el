@@ -36,8 +36,7 @@
                git-gutter
                jedi
                key-chord
-               surround
-               undo-tree))
+               surround))
   (unless (package-installed-p pkg)
     package-install pkg))
 
@@ -169,12 +168,8 @@
       '("italic-command" "bold-command" "italic-declaration" "bold-declaration"))
 
 (custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(flycheck-info ((t nil)))
  '(flycheck-error ((t nil)))
+ '(flycheck-info ((t nil)))
  '(flycheck-warning ((t nil)))
  '(font-latex-subscript-face ((t nil)) t)
  '(font-latex-superscript-face ((t nil)) t))
@@ -205,6 +200,18 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d")
 (load-theme 'dr t)
 
+;; yasnippet
+(setq yas/root-directory "~/.emacs.d/snippets")
+(yas/load-directory yas/root-directory)
+(yas-global-mode)
+
 ;; server
 (load "server")
 (unless (server-running-p) (server-start))
+;
+;; tramp
+;(require 'tramp)
+;(setq tramp-default-method "ssh")
+;(setq tramp-terminal-type "dumb")
+;(setq tramp-shell-prompt-regexp "^> ")
+;(setq tramp-verbose 9)
