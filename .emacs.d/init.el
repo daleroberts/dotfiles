@@ -6,7 +6,8 @@
 (setf column-number-mode t)
 (setf size-indication-mode t)
 (setf visible-bell t)
-(set-frame-font "Source Code Pro 13")
+;(set-frame-font "Source Code Pro 13")
+(set-frame-font "Menlo 11")
 
 (setf user-full-name "Dale Roberts")
 (setf user-mail-address "dale.o.roberts@gmail.com")
@@ -201,17 +202,10 @@
 (load-theme 'dr t)
 
 ;; yasnippet
-(setq yas/root-directory "~/.emacs.d/snippets")
-(yas/load-directory yas/root-directory)
-(yas-global-mode)
+(require 'yasnippet)
+(yas-load-directory "~/.emacs.d/snippets")
+(yas-global-mode 1)
 
 ;; server
 (load "server")
 (unless (server-running-p) (server-start))
-;
-;; tramp
-;(require 'tramp)
-;(setq tramp-default-method "ssh")
-;(setq tramp-terminal-type "dumb")
-;(setq tramp-shell-prompt-regexp "^> ")
-;(setq tramp-verbose 9)
