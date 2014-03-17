@@ -206,6 +206,9 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d")
 (if window-system (load-theme 'dr t))
 
+;; window size
+(if (window-system) (set-frame-size (selected-frame) 90 55))
+
 ;; yasnippet
 (require 'yasnippet)
 (yas-load-directory "~/.emacs.d/snippets")
