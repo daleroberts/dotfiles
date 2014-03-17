@@ -19,27 +19,32 @@
 
 ;; packages
 
-(package-initialize)
-;(add-to-list 'package-archives
-;             '("marmalade" . "http://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(setq package-list 
+      '(auctex
+	auto-complete      
+	epc
+	epl
+	evil
+	evil-leader
+	fill-column-indicator
+	flycheck
+	git-commit
+	git-gutter
+	jedi
+	key-chord
+	surround
+	yasnippet))
 
-(dolist (pkg '(auctex
-               auto-complete      
-               epc
-               epl
-               evil
-               evil-leader
-               fill-column-indicator
-               flycheck
-               git-commit
-               git-gutter
-               jedi
-               key-chord
-               surround))
-  (unless (package-installed-p pkg)
-    package-install pkg))
+(setq package-archives '(("elpa" . "http://tromey.com/elpa/")
+                         ("gnu" . "http://elpa.gnu.org/packages/")
+                         ("marmalade" . "http://marmalade-repo.org/packages/")))
+(package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
+(dolist (package package-list)
+  (unless (package-installed-p package)
+    (package-install package)))
+
 
 ;; 80 column
 
@@ -199,7 +204,7 @@
 
 ;; color theme
 (add-to-list 'custom-theme-load-path "~/.emacs.d")
-(load-theme 'dr t)
+(if window-system (load-theme 'dr t))
 
 ;; yasnippet
 (require 'yasnippet)
