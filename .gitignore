@@ -1,1 +1,4 @@
-.vim/bundle/
+.vim/bundle
+.vim/bundle/vundle
+.emacs.d/auto-save-list
+.emacs.d/elpa
