@@ -33,7 +33,8 @@
 	jedi
 	key-chord
 	surround
-	yasnippet))
+	yasnippet
+        exec-path-from-shell))
 
 (setq package-archives '(("elpa" . "http://tromey.com/elpa/")
                          ("gnu" . "http://elpa.gnu.org/packages/")
@@ -65,10 +66,10 @@
               filename-and-process)
         (mark " " (name 16 -1) " " filename)))
 
-; ;; Undo tree
-; 
-; (require 'undo-tree)
-; (global-undo-tree-mode 1)
+;; Undo tree
+
+(require 'undo-tree)
+(global-undo-tree-mode 1)
 
 ;; python
 
@@ -81,7 +82,7 @@
 (add-hook 'python-mode-hook 'my-prog-mode-hook)
 (add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook 'fci-mode)
-(setq jedi:complete-on-dot t)
+;(setq jedi:complete-on-dot t)
 
 ;; quit minibuffer
 
@@ -165,6 +166,7 @@
 (add-hook 'latex-mode-hook 'flyspell-mode)
 (add-hook 'latex-mode-hook 'variable-pitch-mode)
 (add-hook 'latex-mode-hook 'auto-fill-mode)
+(add-hook 'latex-mode-hook 'visual-line-mode)
 (fset 'font-latex-fontify-script nil)
 (fset 'tex-font-lock-subscript 'ignore)
 
@@ -182,7 +184,7 @@
 
 (add-hook 'LaTeX-mode-hook (lambda ()
   (push
-    '("makepdf" "makepdf2 %n %o %b" TeX-run-TeX nil t
+    '("makepdf" "makepdf2 %n %b" TeX-run-TeX nil t
       :help "Run makepdf on file")
     TeX-command-list)))
 
@@ -213,6 +215,10 @@
 (require 'yasnippet)
 (yas-load-directory "~/.emacs.d/snippets")
 (yas-global-mode 1)
+
+;; paths
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize))
 
 ;; server
 (load "server")
