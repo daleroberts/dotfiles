@@ -1,3 +1,10 @@
+;;; init --- Custom settings
+;;; Commentary:
+;;; Code:
+
+(setf user-full-name "Dale Roberts")
+(setf user-mail-address "dale.o.roberts@gmail.com")
+
 (tool-bar-mode 0)
 (setf inhibit-startup-screen t
       inhibit-startup-message t
@@ -6,18 +13,17 @@
 (setf column-number-mode t)
 (setf size-indication-mode t)
 (setf visible-bell t)
-;(set-frame-font "Source Code Pro 13")
 (set-frame-font "Menlo 11")
+(setf make-backup-files nil)
+(setq-default indent-tabs-mode nil)
+(setf require-final-newline t)
 
-(setf user-full-name "Dale Roberts")
-(setf user-mail-address "dale.o.roberts@gmail.com")
+(global-set-key (kbd "RET") 'newline-and-indent)
 
 (setq display-time-string-forms '((format-time-string "%H:%M" now)))
 (display-time-mode 1)
 
-(setenv "PATH" (concat "/usr/texbin:" (getenv "PATH")))
-
-;; packages
+;; install packages if needed
 
 (setq package-list 
       '(auctex
@@ -46,7 +52,6 @@
   (unless (package-installed-p package)
     (package-install package)))
 
-
 ;; 80 column
 
 (require 'fill-column-indicator)
@@ -55,10 +60,16 @@
 (setq fci-rule-width 1)
 (setq fci-rule-color "gray")
 
+;; flyspell
+
+(setq ispell-program-name "aspell")
+(setq ispell-dictionary "british-ise")
+
 ;; Use the short version for yes/no
+
 (fset 'yes-or-no-p 'y-or-n-p)
 
-;; IBuffer
+;; ibuffer
 
 (setq ibuffer-formats
       '((mark modified read-only " "
@@ -68,21 +79,20 @@
 
 ;; Undo tree
 
-(require 'undo-tree)
-(global-undo-tree-mode 1)
+(global-undo-tree-mode 0)
 
 ;; python
 
-(defun my-prog-mode-hook ()
+(defun my-python-mode-hook ()
   (toggle-truncate-lines 1)
   (setq fill-column 72)
+  (setq jedi:complete-on-dot t)
   (set (make-local-variable 'comment-auto-fill-only-comments) t)
   (auto-fill-mode t))
 
-(add-hook 'python-mode-hook 'my-prog-mode-hook)
 (add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook 'fci-mode)
-;(setq jedi:complete-on-dot t)
+(add-hook 'python-mode-hook 'my-python-mode-hook)
 
 ;; quit minibuffer
 
@@ -150,23 +160,19 @@
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
-;; other
-
-(setf make-backup-files nil)
-(setq-default indent-tabs-mode nil)
-(setf require-final-newline t)
-(global-set-key (kbd "RET") 'newline-and-indent)
-
 ;; flycheck
 
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;; latex
 
-(add-hook 'latex-mode-hook 'flyspell-mode)
-(add-hook 'latex-mode-hook 'variable-pitch-mode)
-(add-hook 'latex-mode-hook 'auto-fill-mode)
-(add-hook 'latex-mode-hook 'visual-line-mode)
+(defun my-latex-mode-hook ()
+  (flyspell-mode)
+  (visual-line-mode)
+  (setq ispell-parser 'tex))
+
+(add-hook 'latex-mode-hook 'my-latex-mode-hook)
+
 (fset 'font-latex-fontify-script nil)
 (fset 'tex-font-lock-subscript 'ignore)
 
@@ -174,7 +180,6 @@
 (setq font-latex-script-display (quote (nil)))
 (setq font-latex-deactivated-keyword-classes
       '("italic-command" "bold-command" "italic-declaration" "bold-declaration"))
-
 (custom-set-faces
  '(flycheck-error ((t nil)))
  '(flycheck-info ((t nil)))
@@ -182,11 +187,12 @@
  '(font-latex-subscript-face ((t nil)) t)
  '(font-latex-superscript-face ((t nil)) t))
 
-(add-hook 'LaTeX-mode-hook (lambda ()
-  (push
-    '("makepdf" "makepdf2 %n %b" TeX-run-TeX nil t
-      :help "Run makepdf on file")
-    TeX-command-list)))
+(add-hook 'LaTeX-mode-hook
+          '(lambda ()
+             (push
+              '("makepdf" "makepdf2 %n %b" TeX-run-TeX nil t
+                :help "Run makepdf on file")
+              TeX-command-list)))
 
 (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "makepdf")))
 
@@ -198,11 +204,7 @@
 (evil-leader/set-key-for-mode 'latex-mode "r" 'TeX-texify)
 
 ;; gitgutter
-
 (global-git-gutter-mode +1)
-(set-face-foreground 'git-gutter:modified "black")
-(set-face-foreground 'git-gutter:added "black")
-(set-face-foreground 'git-gutter:deleted "black")
 
 ;; color theme
 (add-to-list 'custom-theme-load-path "~/.emacs.d")
