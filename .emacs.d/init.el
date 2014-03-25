@@ -1,24 +1,30 @@
 ;;; init --- Custom settings
 
-(setf user-full-name "Dale Roberts")
-(setf user-mail-address "dale.o.roberts@gmail.com")
-
-(tool-bar-mode 0)
 (setf inhibit-startup-screen t
       inhibit-startup-message t
-      inhibit-startup-echo-area-message t)
-(set-scroll-bar-mode nil)
-(setf column-number-mode t)
-(setf size-indication-mode t)
-(setf visible-bell t)
-(set-frame-font "Consolas 12")
-(setf make-backup-files nil)
-(setq-default indent-tabs-mode nil)
-(setf require-final-newline t)
+      inhibit-startup-echo-area-message t
+      visible-bell t
+      column-number-mode nil
+      size-indication-mode nil
+      make-backup-files nil
+      require-final-newline t
+      user-full-name "Dale Roberts"
+      user-mail-address "dale.o.roberts@gmail.com")
+
+(when (window-system)
+  (tool-bar-mode 0)
+  (set-scroll-bar-mode nil)
+  (set-frame-font "Consolas 12")
+  (set-frame-size (selected-frame) 90 55))
+
+;(setq-default indent-tabs-mode nil)
 
 (global-set-key (kbd "RET") 'newline-and-indent)
 
 ;; install packages if needed
+
+(setq package-archives '(("melpa" . "http://melpa.milkbox.net/packages/")
+                         ("gnu" . "http://elpa.gnu.org/packages/")))
 
 (setq package-list
       '(auctex
@@ -30,7 +36,6 @@
 	evil-leader
 	fill-column-indicator
 	flycheck
-	git-commit-mode
 	git-gutter
 	jedi
 	key-chord
@@ -39,15 +44,11 @@
         smart-mode-line
         exec-path-from-shell))
 
-(setq package-archives '(
-                         ("melpa" . "http://melpa.milkbox.net/packages/")
-                         ;("elpa" . "http://tromey.com/elpa/")
-                         ("gnu" . "http://elpa.gnu.org/packages/")
-                         ;("marmalade" . "http://marmalade-repo.org/packages/")
-                         ))
 (package-initialize)
+
 (unless package-archive-contents
   (package-refresh-contents))
+
 (dolist (package package-list)
   (unless (package-installed-p package)
     (package-install package)))
@@ -79,20 +80,21 @@
 
 ;; Undo tree
 
-(global-undo-tree-mode 0)
+(global-undo-tree-mode -1)
 
 ;; python
 
 (defun my-python-mode-hook ()
-  (toggle-truncate-lines 1)
   (setq fill-column 72)
   (setq jedi:complete-on-dot t)
   (set (make-local-variable 'comment-auto-fill-only-comments) t)
+  (toggle-truncate-lines 1)
   (auto-fill-mode t)
+  (flycheck-mode 1)
+  (jedi:setup)
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
-  (add-hook 'before-save-hook 'py-autopep8-before-save) )
+  (add-hook 'before-save-hook 'py-autopep8-before-save))
 
-(add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook 'fci-mode)
 (add-hook 'python-mode-hook 'autopair-mode)
 (add-hook 'python-mode-hook 'my-python-mode-hook)
@@ -123,7 +125,7 @@
 
 (setq show-paren-delay 0.1)
 (show-paren-mode 1)
-(setq blink-matching-paren t)
+(setq blink-matching-paren nil)
 
 ;; smooth-scroll
 
@@ -138,7 +140,6 @@
 
 (setq current-language-environment "UTF-8")
 (prefer-coding-system 'utf-8)
-
 
 ;; evil
 
@@ -199,22 +200,15 @@
 (require 'surround)
 (global-surround-mode 1)
 
-;; term
-
-(autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
-(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-
-;; flycheck
-
-(add-hook 'after-init-hook #'global-flycheck-mode)
-
 ;; latex
 
 (defun my-latex-mode-hook ()
   (undo-tree-mode 0)
   (flyspell-mode 1)
+  (flycheck-mode 1)
   (visual-line-mode 1)
   (auto-revert-mode 1)
+  (yas-minor-mode-on)
   (setq ispell-parser 'tex))
 
 (add-hook 'LaTeX-mode-hook 'my-latex-mode-hook)
@@ -255,23 +249,22 @@
 (global-git-gutter-mode 1)
 
 ;; color theme
+
 (add-to-list 'custom-theme-load-path "~/.emacs.d")
 (if window-system (load-theme 'dr t))
 
-;; window size
-(if (window-system) (set-frame-size (selected-frame) 90 55))
-
 ;; yasnippet
+
 (require 'yasnippet)
-;(yas-load-directory "~/.emacs.d/snippets")
 (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
-(yas-global-mode 1)
 
 ;; paths
+
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))
 
 ;; smart-mode-line
+
 (setq sml/theme 'respectful)
 (setq sml/name-width 20)
 (setq sml/mode-width 5)
