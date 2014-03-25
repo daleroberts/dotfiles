@@ -130,6 +130,8 @@
 (global-evil-leader-mode)
 (evil-leader/set-leader ",")
 
+(evil-set-initial-state 'shell-mode 'normal)
+
 (setq evil-esc-delay 0)
 (setq evil-default-cursor 'bar)
 (setq evil-normal-state-cursor 'box)
@@ -148,6 +150,8 @@
 (define-key evil-visual-state-map (kbd ";") 'evil-ex)
 (define-key evil-visual-state-map (kbd "f") 'indent-region)
 (define-key evil-motion-state-map (kbd ";") 'evil-ex)
+(define-key evil-normal-state-map ",," 'evil-buffer)
+(define-key evil-normal-state-map ",s" 'shell)
 
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
 (define-key evil-visual-state-map [escape] 'keyboard-quit)
