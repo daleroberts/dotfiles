@@ -11,15 +11,12 @@
 (setf column-number-mode t)
 (setf size-indication-mode t)
 (setf visible-bell t)
-(set-frame-font "Menlo 11")
+(set-frame-font "Consolas 12")
 (setf make-backup-files nil)
 (setq-default indent-tabs-mode nil)
 (setf require-final-newline t)
 
 (global-set-key (kbd "RET") 'newline-and-indent)
-
-;(setq display-time-string-forms '((format-time-string "%H:%M" now)))
-;(display-time-mode 1)
 
 ;; install packages if needed
 
@@ -122,6 +119,27 @@
 (ad-activate 'next-buffer)
 (ad-activate 'previous-buffer)
 
+;; show paren
+
+(setq show-paren-delay 0.1)
+(show-paren-mode 1)
+(setq blink-matching-paren t)
+
+;; smooth-scroll
+
+(setq scroll-margin 3
+      scroll-conservatively 0
+      scroll-up-aggressively 0.01
+      scroll-down-aggressively 0.01)
+(setq-default scroll-up-aggressively 0.01
+      scroll-down-aggressively 0.01)
+
+;; Make default encoding UTF-8 everywhere
+
+(setq current-language-environment "UTF-8")
+(prefer-coding-system 'utf-8)
+
+
 ;; evil
 
 (require 'evil)
@@ -130,7 +148,8 @@
 (global-evil-leader-mode)
 (evil-leader/set-leader ",")
 
-(evil-set-initial-state 'shell-mode 'normal)
+(evil-set-initial-state 'shell-mode 'insert)
+(evil-set-initial-state 'help-mode 'normal)
 
 (setq evil-esc-delay 0)
 (setq evil-default-cursor 'bar)
@@ -147,22 +166,32 @@
 (define-key evil-normal-state-map ",b" 'ibuffer)
 (define-key evil-normal-state-map ",g" 'jedi:goto-definition)
 (define-key evil-normal-state-map (kbd "K") 'jedi:show-doc)
-(define-key evil-visual-state-map (kbd ";") 'evil-ex)
-(define-key evil-visual-state-map (kbd "f") 'indent-region)
-(define-key evil-motion-state-map (kbd ";") 'evil-ex)
 (define-key evil-normal-state-map ",," 'evil-buffer)
 (define-key evil-normal-state-map ",s" 'shell)
-
+(define-key evil-normal-state-map (kbd "C-w <left>") 'evil-window-left)
+(define-key evil-normal-state-map (kbd "C-w <right>") 'evil-window-right)
+(define-key evil-normal-state-map (kbd "C-w <up>") 'evil-window-up)
+(define-key evil-normal-state-map (kbd "C-w <down>") 'evil-window-down)
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
+
 (define-key evil-visual-state-map [escape] 'keyboard-quit)
+(define-key evil-visual-state-map (kbd ";") 'evil-ex)
+(define-key evil-visual-state-map (kbd "f") 'indent-region)
+
+(define-key evil-motion-state-map (kbd ";") 'evil-ex)
+
 (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 
+(evil-ex-define-cmd "E[dit]" 'evil-edit)
+(evil-ex-define-cmd "W[rite]" 'evil-write)
+
 (setq key-chord-two-keys-delay 0.5)
 (key-chord-define evil-normal-state-map "ee" 'eval-buffer)
+(key-chord-define evil-normal-state-map ";;" 'eval-expression)
 (key-chord-mode 1)
 
 ;; surround
@@ -197,6 +226,7 @@
 (setq font-latex-script-display (quote (nil)))
 (setq font-latex-deactivated-keyword-classes
       '("italic-command" "bold-command" "italic-declaration" "bold-declaration"))
+
 (custom-set-faces
  '(flycheck-error ((t nil)))
  '(flycheck-info ((t nil)))
