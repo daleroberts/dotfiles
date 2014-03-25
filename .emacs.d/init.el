@@ -1,6 +1,4 @@
 ;;; init --- Custom settings
-;;; Commentary:
-;;; Code:
 
 (setf user-full-name "Dale Roberts")
 (setf user-mail-address "dale.o.roberts@gmail.com")
@@ -20,31 +18,36 @@
 
 (global-set-key (kbd "RET") 'newline-and-indent)
 
-(setq display-time-string-forms '((format-time-string "%H:%M" now)))
-(display-time-mode 1)
+;(setq display-time-string-forms '((format-time-string "%H:%M" now)))
+;(display-time-mode 1)
 
 ;; install packages if needed
 
-(setq package-list 
+(setq package-list
       '(auctex
-	auto-complete      
+	auto-complete
+        py-autopep8
 	epc
 	epl
 	evil
 	evil-leader
 	fill-column-indicator
 	flycheck
-	git-commit
+	git-commit-mode
 	git-gutter
 	jedi
 	key-chord
 	surround
 	yasnippet
+        smart-mode-line
         exec-path-from-shell))
 
-(setq package-archives '(("elpa" . "http://tromey.com/elpa/")
+(setq package-archives '(
+                         ("melpa" . "http://melpa.milkbox.net/packages/")
+                         ;("elpa" . "http://tromey.com/elpa/")
                          ("gnu" . "http://elpa.gnu.org/packages/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")))
+                         ;("marmalade" . "http://marmalade-repo.org/packages/")
+                         ))
 (package-initialize)
 (unless package-archive-contents
   (package-refresh-contents))
@@ -88,10 +91,13 @@
   (setq fill-column 72)
   (setq jedi:complete-on-dot t)
   (set (make-local-variable 'comment-auto-fill-only-comments) t)
-  (auto-fill-mode t))
+  (auto-fill-mode t)
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+  (add-hook 'before-save-hook 'py-autopep8-before-save) )
 
 (add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook 'fci-mode)
+(add-hook 'python-mode-hook 'autopair-mode)
 (add-hook 'python-mode-hook 'my-python-mode-hook)
 
 ;; quit minibuffer
@@ -109,7 +115,12 @@
   (when (string-match "^\\*" (buffer-name))
     (next-buffer)))
 
+(defadvice previous-buffer (after avoid-messages-buffer-in-next-buffer)
+  (when (string-match "^\\*" (buffer-name))
+    (previous-buffer)))
+
 (ad-activate 'next-buffer)
+(ad-activate 'previous-buffer)
 
 ;; evil
 
@@ -167,11 +178,12 @@
 ;; latex
 
 (defun my-latex-mode-hook ()
-  (flyspell-mode)
-  (visual-line-mode)
+  (undo-tree-mode 0)
+  (flyspell-mode 1)
+  (visual-line-mode 1)
   (setq ispell-parser 'tex))
 
-(add-hook 'latex-mode-hook 'my-latex-mode-hook)
+(add-hook 'LaTeX-mode-hook 'my-latex-mode-hook)
 
 (fset 'font-latex-fontify-script nil)
 (fset 'tex-font-lock-subscript 'ignore)
@@ -204,7 +216,8 @@
 (evil-leader/set-key-for-mode 'latex-mode "r" 'TeX-texify)
 
 ;; gitgutter
-(global-git-gutter-mode +1)
+
+(global-git-gutter-mode 1)
 
 ;; color theme
 (add-to-list 'custom-theme-load-path "~/.emacs.d")
@@ -215,13 +228,22 @@
 
 ;; yasnippet
 (require 'yasnippet)
-(yas-load-directory "~/.emacs.d/snippets")
+;(yas-load-directory "~/.emacs.d/snippets")
+(setq yas-snippet-dirs '("~/.emacs.d/snippets"))
 (yas-global-mode 1)
 
 ;; paths
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))
 
+;; smart-mode-line
+(setq sml/theme 'respectful)
+(setq sml/name-width 20)
+(setq sml/mode-width 5)
+(setq sml/shorten-directory 't)
+(setq sml/shorten-mode 't)
+(sml/setup)
+
 ;; server
-(load "server")
-(unless (server-running-p) (server-start))
+;(load "server")
+;(unless (server-running-p) (server-start))
