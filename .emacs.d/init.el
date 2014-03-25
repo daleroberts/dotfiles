@@ -181,6 +181,7 @@
   (undo-tree-mode 0)
   (flyspell-mode 1)
   (visual-line-mode 1)
+  (auto-revert-mode 1)
   (setq ispell-parser 'tex))
 
 (add-hook 'LaTeX-mode-hook 'my-latex-mode-hook)
