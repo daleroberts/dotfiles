@@ -1,5 +1,5 @@
 ;;; init --- Custom settings
-
+ 
 (setf inhibit-startup-screen t
       inhibit-startup-message t
       inhibit-startup-echo-area-message t
@@ -16,6 +16,9 @@
   (set-scroll-bar-mode nil)
   (set-frame-font "Consolas 12")
   (set-frame-size (selected-frame) 90 55))
+
+(when (not (window-system))
+  (menu-bar-mode -1))
 
 ;(setq-default indent-tabs-mode nil)
 
