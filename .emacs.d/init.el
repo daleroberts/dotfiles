@@ -1,5 +1,5 @@
 ;;; init --- Custom settings
- 
+
 (setf inhibit-startup-screen t
       inhibit-startup-message t
       inhibit-startup-echo-area-message t
@@ -205,6 +205,15 @@
 
 ;; latex
 
+(defun my-latex-chgenv ()
+  (interactive)
+  (let* ((env-cycle '("equation" "align" "multline"))
+	 (env-tail (member (LaTeX-current-environment) env-cycle)))
+    (when env-tail
+      (LaTeX-modify-environment
+       (or (car (cdr env-tail))
+	   (car env-cycle))))))
+
 (defun my-latex-mode-hook ()
   (undo-tree-mode 0)
   (flyspell-mode 1)
@@ -224,13 +233,6 @@
 (setq font-latex-deactivated-keyword-classes
       '("italic-command" "bold-command" "italic-declaration" "bold-declaration"))
 
-(custom-set-faces
- '(flycheck-error ((t nil)))
- '(flycheck-info ((t nil)))
- '(flycheck-warning ((t nil)))
- '(font-latex-subscript-face ((t nil)) t)
- '(font-latex-superscript-face ((t nil)) t))
-
 (add-hook 'LaTeX-mode-hook
           '(lambda ()
              (push
@@ -246,6 +248,7 @@
   (TeX-command-menu "makepdf"))
 
 (evil-leader/set-key-for-mode 'latex-mode "r" 'TeX-texify)
+(evil-leader/set-key-for-mode 'latex-mode "c" 'my-latex-chgenv)
 
 ;; gitgutter
 
@@ -264,7 +267,10 @@
 ;; paths
 
 (when (memq window-system '(mac ns))
-  (exec-path-from-shell-initialize))
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-env "PYTHONPATH")
+  (exec-path-from-shell-copy-env "PS1")
+  )
 
 ;; smart-mode-line
 
@@ -278,3 +284,16 @@
 ;; server
 ;(load "server")
 ;(unless (server-running-p) (server-start))
+
+;; colors
+
+(when window-system
+  (set-face-foreground 'git-gutter:modified "#ddffdd")
+  (set-face-background 'git-gutter:modified "#ddffdd")
+  (set-face-background 'git-gutter:added "#ddffdd")
+  (set-face-foreground 'git-gutter:added "#ddffdd")
+  (set-face-foreground 'git-gutter:deleted "#fdd")
+  (set-face-background 'git-gutter:deleted "#fdd")
+  (setq git-gutter:added-sign " ")
+  (setq git-gutter:deleted-sign " ")
+  (setq git-gutter:modified-sign " "))
