@@ -102,6 +102,10 @@
 (add-hook 'python-mode-hook 'autopair-mode)
 (add-hook 'python-mode-hook 'my-python-mode-hook)
 
+(require 'python)
+(setq python-shell-interpreter "ipython")
+(setq python-shell-interpreter-args "--pylab")
+
 ;; quit minibuffer
 
 (defun minibuffer-keyboard-quit ()
