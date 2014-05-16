@@ -89,6 +89,7 @@
 
 (defun my-python-mode-hook ()
   (setq fill-column 72)
+  (setq python-fill-docstring-style 'django)
   (setq jedi:complete-on-dot t)
   (set (make-local-variable 'comment-auto-fill-only-comments) t)
   (toggle-truncate-lines 1)
