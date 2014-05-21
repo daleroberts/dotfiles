@@ -69,6 +69,42 @@
 (setq ispell-program-name "aspell")
 (setq ispell-dictionary "british-ise")
 
+;; flycheck
+
+(defvar my-flycheck-minor-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "\M-p" 'flycheck-prev-error)
+    (define-key map "\M-n" 'flycheck-next-error)
+    map)
+  "Keymap for my flycheck minor mode.")
+
+(defun my-flymake-err-at (pos)
+  (let ((overlays (overlays-at pos)))
+    (remove nil
+            (mapcar (lambda (overlay)
+                      (and (overlay-get overlay 'flymake-overlay)
+                           (overlay-get overlay 'help-echo)))
+                    overlays))))
+
+(defun my-flymake-err-echo ()
+  (message "%s" (mapconcat 'identity (my-flymake-err-at (point)) "\n")))
+
+(defadvice flymake-goto-next-error (after display-message activate compile)
+  (my-flymake-err-echo))
+
+(defadvice flymake-goto-prev-error (after display-message activate compile)
+  (my-flymake-err-echo))
+
+(define-minor-mode my-flycheck-minor-mode
+  "Simple minor mode which adds some key bindings for moving to the next and previous errors.
+
+Key bindings:
+
+\\{my-flycheck-minor-mode-map}"
+  nil
+  nil
+  :keymap my-flycheck-minor-mode-map)
+
 ;; Use the short version for yes/no
 
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -219,6 +255,7 @@
        (or (car (cdr env-tail))
 	   (car env-cycle))))))
 
+
 (defun my-latex-mode-hook ()
   (undo-tree-mode 0)
   (flyspell-mode 1)
@@ -226,12 +263,12 @@
   (visual-line-mode 1)
   (auto-revert-mode 1)
   (yas-minor-mode-on)
-  (setq ispell-parser 'tex))
+  (setq ispell-parser 'tex)
+  (fset 'font-latex-fontify-script nil)
+  (fset 'tex-font-lock-subscript 'ignore))
 
 (add-hook 'LaTeX-mode-hook 'my-latex-mode-hook)
-
-(fset 'font-latex-fontify-script nil)
-(fset 'tex-font-lock-subscript 'ignore)
+(add-hook 'LaTeX-mode-hook 'my-flycheck-minor-mode)
 
 (setq font-latex-fontify-sectioning 'color)
 (setq font-latex-script-display (quote (nil)))
