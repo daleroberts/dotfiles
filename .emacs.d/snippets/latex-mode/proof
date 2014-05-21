@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: proof
+# key: proof
+# --
+\begin{proof}
+$0
+\end{proof}
