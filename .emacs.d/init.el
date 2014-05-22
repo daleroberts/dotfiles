@@ -20,10 +20,6 @@
 (when (not (window-system))
   (menu-bar-mode -1))
 
-;(setq-default indent-tabs-mode nil)
-
-(global-set-key (kbd "RET") 'newline-and-indent)
-
 ;; install packages if needed
 
 (setq package-archives '(("melpa" . "http://melpa.milkbox.net/packages/")
@@ -73,7 +69,7 @@
 
 (defvar my-flycheck-minor-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "\M-p" 'flycheck-prev-error)
+    (define-key map "\M-p" 'flycheck-previous-error)
     (define-key map "\M-n" 'flycheck-next-error)
     map)
   "Keymap for my flycheck minor mode.")
@@ -96,11 +92,8 @@
   (my-flymake-err-echo))
 
 (define-minor-mode my-flycheck-minor-mode
-  "Simple minor mode which adds some key bindings for moving to the next and previous errors.
-
-Key bindings:
-
-\\{my-flycheck-minor-mode-map}"
+  "Simple minor mode which adds some key bindings for moving to
+   the next and previous errors."
   nil
   nil
   :keymap my-flycheck-minor-mode-map)
@@ -182,12 +175,27 @@ Key bindings:
       scroll-up-aggressively 0.01
       scroll-down-aggressively 0.01)
 (setq-default scroll-up-aggressively 0.01
-      scroll-down-aggressively 0.01)
+	      scroll-down-aggressively 0.01)
 
 ;; Make default encoding UTF-8 everywhere
 
 (setq current-language-environment "UTF-8")
 (prefer-coding-system 'utf-8)
+
+;; shell
+
+(autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+(defun shell ()
+  (interactive)
+  (term "/bin/bash"))
+
+;; frame width
+
+(defun toggle-frame-width ()
+  (interactive)
+  (set-frame-size (selected-frame) (if (= (frame-width) 192) 110 192) 55))
 
 ;; evil
 
@@ -206,8 +214,10 @@ Key bindings:
 (setq evil-visual-state-cursor 'hollow)
 (setq evil-replace-state-cursor 'box)
 
-(define-key evil-normal-state-map (kbd "<s-return>") 'toggle-frame-fullscreen)
-(define-key evil-normal-state-map (kbd "<SPC>") 'evil-search-forward)
+;;(define-key evil-normal-state-map (kbd "<s-return>") 'toggle-frame-fullscreen)
+(define-key evil-normal-state-map (kbd "<s-return>") 'toggle-frame-width)
+
+(define-key evil-normal-state-map (kbd "<SPC>") 'isearch-forward)
 (define-key evil-normal-state-map (kbd "n") 'isearch-repeat-forward)
 (define-key evil-normal-state-map (kbd "Q") 'fill-paragraph)
 (define-key evil-normal-state-map (kbd ";") 'evil-ex)
@@ -222,32 +232,61 @@ Key bindings:
 (define-key evil-normal-state-map (kbd "C-w <right>") 'evil-window-right)
 (define-key evil-normal-state-map (kbd "C-w <up>") 'evil-window-up)
 (define-key evil-normal-state-map (kbd "C-w <down>") 'evil-window-down)
-(define-key evil-normal-state-map [escape] 'keyboard-quit)
+(define-key evil-normal-state-map (kbd "<RET>") 'evil-write)
 
-(define-key evil-visual-state-map [escape] 'keyboard-quit)
 (define-key evil-visual-state-map (kbd ";") 'evil-ex)
 (define-key evil-visual-state-map (kbd "f") 'indent-region)
 
 (define-key evil-insert-state-map "\C-s\C-s" 'evil-buffer)
+(define-key evil-insert-state-map (kbd "<s-return>") 'toggle-frame-width)
 
 (define-key evil-motion-state-map (kbd ";") 'evil-ex)
 
+(define-key evil-normal-state-map [escape] 'keyboard-quit)
+(define-key evil-visual-state-map [escape] 'keyboard-quit)
 (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+(define-key isearch-mode-map [escape] 'isearch-exit)
+
+;;(global-set-key (kbd "RET") 'newline-and-indent)
 
 (evil-ex-define-cmd "E[dit]" 'evil-edit)
 (evil-ex-define-cmd "W[rite]" 'evil-write)
+(evil-ex-define-cmd "Bn" 'evil-next-buffer)
+(evil-ex-define-cmd "Bd" 'evil-delete-buffer)
 (evil-ex-define-cmd "cn" 'flycheck-next-error)
+(evil-ex-define-cmd "Cn" 'flycheck-next-error)
 (evil-ex-define-cmd "cp" 'flycheck-prev-error)
+(evil-ex-define-cmd "Cp" 'flycheck-prev-error)
 
 (setq key-chord-two-keys-delay 0.5)
 (key-chord-define evil-normal-state-map "ee" 'eval-buffer)
 (key-chord-define evil-normal-state-map ";;" 'eval-expression)
 (key-chord-define evil-insert-state-map ",," 'evil-buffer)
 (key-chord-mode 1)
+
+;; isearch
+
+(add-hook 'isearch-mode-end-hook 'my-goto-match-beginning)
+(defun my-goto-match-beginning ()
+  (when (and isearch-forward isearch-other-end)
+    (goto-char isearch-other-end)))
+
+(defadvice isearch-exit (after my-goto-match-beginning activate)
+  "Go to beginning of match."
+  (when (and isearch-forward isearch-other-end)
+    (goto-char isearch-other-end)))
+
+(defadvice isearch-repeat (after isearch-no-fail activate)
+  (unless isearch-success
+    (ad-disable-advice 'isearch-repeat 'after 'isearch-no-fail)
+    (ad-activate 'isearch-repeat)
+    (isearch-repeat (if isearch-forward 'forward))
+    (ad-enable-advice 'isearch-repeat 'after 'isearch-no-fail)
+    (ad-activate 'isearch-repeat)))
 
 ;; surround
 
@@ -334,18 +373,18 @@ Key bindings:
 (sml/setup)
 
 ;; server
-;(load "server")
-;(unless (server-running-p) (server-start))
+;;(load "server")
+;;(unless (server-running-p) (server-start))
 
 ;; colors
 
 (when window-system
-  (set-face-foreground 'git-gutter:modified "#ddffdd")
-  (set-face-background 'git-gutter:modified "#ddffdd")
-  (set-face-background 'git-gutter:added "#ddffdd")
-  (set-face-foreground 'git-gutter:added "#ddffdd")
-  (set-face-foreground 'git-gutter:deleted "#fdd")
-  (set-face-background 'git-gutter:deleted "#fdd")
+  (set-face-foreground 'git-gutter:modified "#000000")
+  (set-face-background 'git-gutter:modified "#47D6D6")
+  (set-face-background 'git-gutter:added "#59C44B")
+  (set-face-foreground 'git-gutter:added "#000000")
+  (set-face-foreground 'git-gutter:deleted "#000000")
+  (set-face-background 'git-gutter:deleted "#D64747")
   (setq git-gutter:added-sign " ")
   (setq git-gutter:deleted-sign " ")
   (setq git-gutter:modified-sign " "))

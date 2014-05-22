@@ -157,8 +157,8 @@
    `(info-menu-header ((,class (:family "helv" :weight bold))))
    `(info-node ((,class (:foreground "DeepSkyBlue1"))))
    `(info-xref ((,class (:foreground "SeaGreen4"))))
-   `(isearch ((,class (:background "#fcf7ed" :foreground "black" :box '(:line-width 1 :color "teal")))))
-   `(lazy-highlight ((,class (:background "#fcf7ed"))))
+   `(isearch ((,class (:background "#7ADCDE" :foreground "black"))))
+   `(lazy-highlight ((,class (:background "#CAE7ED" :foreground "black"))))
    `(match ((,class (:background "#fcf7ed" :foreground "black"))))
    `(minibuffer-prompt ((,class (:foreground "black"))))
    `(mode-line ((,class (:background "gray75" :foreground "black" ))))
@@ -180,18 +180,7 @@
    `(font-latex-sectioning-5-face ((,class (:foreground "black"))))
    `(font-latex-math-face ((,class (:foreground "teal"))))
    `(font-latex-string-face ((,class (:foreground "#77507b"))))
-  ))
-
-(set-face-foreground 'git-gutter:modified "#ddffdd")
-(set-face-background 'git-gutter:modified "#ddffdd")
-(set-face-background 'git-gutter:added "#ddffdd")
-(set-face-foreground 'git-gutter:added "#ddffdd")
-(set-face-foreground 'git-gutter:deleted "#fdd")
-(set-face-background 'git-gutter:deleted "#fdd")
-
-(setq git-gutter:added-sign " ")
-(setq git-gutter:deleted-sign " ")
-(setq git-gutter:modified-sign " ")
+   ))
 
 (provide-theme 'dr)
 
