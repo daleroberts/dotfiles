@@ -15,7 +15,7 @@
   (tool-bar-mode 0)
   (set-scroll-bar-mode nil)
   (set-frame-font "Consolas 12")
-  (set-frame-size (selected-frame) 90 55))
+  (set-frame-size (selected-frame) 110 55))
 
 (when (not (window-system))
   (menu-bar-mode -1))
@@ -130,6 +130,7 @@ Key bindings:
   (set (make-local-variable 'comment-auto-fill-only-comments) t)
   (toggle-truncate-lines 1)
   (auto-fill-mode t)
+  (setq flycheck-python-pylint-executable "pylint")
   (flycheck-mode 1)
   (jedi:setup)
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -138,6 +139,9 @@ Key bindings:
 (add-hook 'python-mode-hook 'fci-mode)
 (add-hook 'python-mode-hook 'autopair-mode)
 (add-hook 'python-mode-hook 'my-python-mode-hook)
+(add-hook 'python-mode-hook 'my-flycheck-minor-mode)
+
+(evil-leader/set-key-for-mode 'python-mode "f" 'py-autopep8)
 
 (require 'python)
 (setq python-shell-interpreter "ipython")
@@ -212,6 +216,7 @@ Key bindings:
 (define-key evil-normal-state-map ",g" 'jedi:goto-definition)
 (define-key evil-normal-state-map (kbd "K") 'jedi:show-doc)
 (define-key evil-normal-state-map ",," 'evil-buffer)
+(define-key evil-normal-state-map "\C-s\C-s" 'evil-buffer)
 (define-key evil-normal-state-map ",s" 'shell)
 (define-key evil-normal-state-map (kbd "C-w <left>") 'evil-window-left)
 (define-key evil-normal-state-map (kbd "C-w <right>") 'evil-window-right)
@@ -223,6 +228,8 @@ Key bindings:
 (define-key evil-visual-state-map (kbd ";") 'evil-ex)
 (define-key evil-visual-state-map (kbd "f") 'indent-region)
 
+(define-key evil-insert-state-map "\C-s\C-s" 'evil-buffer)
+
 (define-key evil-motion-state-map (kbd ";") 'evil-ex)
 
 (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
@@ -233,10 +240,13 @@ Key bindings:
 
 (evil-ex-define-cmd "E[dit]" 'evil-edit)
 (evil-ex-define-cmd "W[rite]" 'evil-write)
+(evil-ex-define-cmd "cn" 'flycheck-next-error)
+(evil-ex-define-cmd "cp" 'flycheck-prev-error)
 
 (setq key-chord-two-keys-delay 0.5)
 (key-chord-define evil-normal-state-map "ee" 'eval-buffer)
 (key-chord-define evil-normal-state-map ";;" 'eval-expression)
+(key-chord-define evil-insert-state-map ",," 'evil-buffer)
 (key-chord-mode 1)
 
 ;; surround
