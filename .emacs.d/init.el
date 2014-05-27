@@ -14,6 +14,7 @@
 (when (window-system)
   (tool-bar-mode 0)
   (set-scroll-bar-mode nil)
+  (setq ns-pop-up-frames nil)
   (set-frame-font "Consolas 12")
   (set-frame-size (selected-frame) 110 55))
 
