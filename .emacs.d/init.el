@@ -197,6 +197,11 @@
   (interactive)
   (set-frame-size (selected-frame) (if (= (frame-width) 192) 110 192) 55))
 
+;; scale fonts
+
+(global-set-key (kbd "C-+") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
+
 ;; evil
 
 (require 'evil)
