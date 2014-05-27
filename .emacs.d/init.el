@@ -244,6 +244,9 @@
 
 (define-key evil-insert-state-map "\C-s\C-s" 'evil-buffer)
 (define-key evil-insert-state-map (kbd "<s-return>") 'toggle-frame-width)
+(define-key evil-insert-state-map (kbd "<s-right>") 'move-end-of-line)
+(define-key evil-insert-state-map (kbd "C-e") 'move-end-of-line)
+(define-key evil-insert-state-map (kbd "<s-left>") 'evil-beginning-of-line)
 
 (define-key evil-motion-state-map (kbd ";") 'evil-ex)
 
