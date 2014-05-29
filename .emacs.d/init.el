@@ -318,6 +318,8 @@
   (undo-tree-mode 0)
   (flyspell-mode 1)
   (flycheck-mode 1)
+  (setq flycheck-chktexrc "~/.chktexrc")
+  (setq TeX-command-default "makepdf")
   (visual-line-mode 1)
   (auto-revert-mode 1)
   (yas-minor-mode-on)
@@ -333,14 +335,10 @@
 (setq font-latex-deactivated-keyword-classes
       '("italic-command" "bold-command" "italic-declaration" "bold-declaration"))
 
-(add-hook 'LaTeX-mode-hook
-          '(lambda ()
-             (push
+(eval-after-load "tex"
+  '(add-to-list 'TeX-command-list
               '("makepdf" "makepdf2 %n %b" TeX-run-TeX nil t
-                :help "Run makepdf on file")
-              TeX-command-list)))
-
-(add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "makepdf")))
+                :help "Run makepdf on file")))
 
 (defun TeX-texify ()
   (interactive)
@@ -397,3 +395,15 @@
   (setq git-gutter:added-sign " ")
   (setq git-gutter:deleted-sign " ")
   (setq git-gutter:modified-sign " "))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(flycheck-chktexrc "~/.chktexrc"))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

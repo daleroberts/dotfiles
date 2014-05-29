@@ -170,7 +170,7 @@
    `(outline-4 ((,class (:foreground "RoyalBlue"))))
    `(outline-5 ((,class (:foreground "DeepSkyBlue"))))
    `(primary-selection ((,class (:background "blue3"))))
-   `(region ((,class (:background "gray"))))
+   `(region ((,class (:background "#9AD3E3"))))
    `(show-paren-match-face ((,class (:background "#777" :foreground "white"))))
    `(show-paren-mismatch-face ((,class (:background "red1" :foreground "black"))))
    `(warning ((,class (:foreground "Yellow4"))))
