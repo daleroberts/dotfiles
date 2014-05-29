@@ -1,0 +1,6 @@
+VerbEnvir { pgfpicture tikzpicture }
+MathEnvir
+{
+    displaymath math eqnarray array equation align
+}
+CmdLine { -n 3 }
