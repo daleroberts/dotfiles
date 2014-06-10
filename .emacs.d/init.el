@@ -323,6 +323,7 @@
   (visual-line-mode 1)
   (auto-revert-mode 1)
   (yas-minor-mode-on)
+  (yas-reload-all)
   (setq ispell-parser 'tex)
   (fset 'font-latex-fontify-script nil)
   (fset 'tex-font-lock-subscript 'ignore))
@@ -359,8 +360,8 @@
 
 ;; yasnippet
 
-(require 'yasnippet)
 (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+(require 'yasnippet)
 
 ;; paths
 
