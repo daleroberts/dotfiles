@@ -30,6 +30,8 @@
       '(auctex
 	auto-complete
         py-autopep8
+	autopair
+	ess
 	epc
 	epl
 	evil
@@ -39,7 +41,7 @@
 	git-gutter
 	jedi
 	key-chord
-	surround
+	evil-surround
 	yasnippet
         smart-mode-line
         exec-path-from-shell))
@@ -125,6 +127,7 @@
   (toggle-truncate-lines 1)
   (auto-fill-mode t)
   (setq flycheck-python-pylint-executable "pylint")
+  (yas-minor-mode-on)
   (flycheck-mode 1)
   (jedi:setup)
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -299,8 +302,8 @@
 
 ;; surround
 
-(require 'surround)
-(global-surround-mode 1)
+(require 'evil-surround)
+(global-evil-surround-mode 1)
 
 ;; latex
 
@@ -316,6 +319,7 @@
 
 (defun my-latex-mode-hook ()
   (undo-tree-mode 0)
+  (auto-save-mode 0)
   (flyspell-mode 1)
   (flycheck-mode 1)
   (setq flycheck-chktexrc "~/.chktexrc")
@@ -380,6 +384,9 @@
 (setq sml/shorten-mode 't)
 (sml/setup)
 
+;; ess
+(require 'ess-site)
+
 ;; server
 ;;(load "server")
 ;;(unless (server-running-p) (server-start))
@@ -396,3 +403,15 @@
   (setq git-gutter:added-sign " ")
   (setq git-gutter:deleted-sign " ")
   (setq git-gutter:modified-sign " "))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes (quote ("3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723" default))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
