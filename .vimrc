@@ -5,25 +5,15 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 
 Bundle 'gmarik/vundle'
-
 Bundle 'nanotech/jellybeans.vim'
-Bundle 'endel/vim-github-colorscheme'
-Bundle 'junegunn/seoul256.vim'
-
-Bundle 'guns/xterm-color-table.vim'
-
 Bundle 'sjl/gundo.vim'
-Bundle 'kien/ctrlp.vim'
-Bundle 'godlygeek/tabular'
 Bundle 'airblade/vim-gitgutter'
 Bundle 'scrooloose/syntastic'
-Bundle 'davidhalter/jedi-vim'
-Bundle 'ervandew/supertab'
-
 Bundle 'tomtom/tlib_vim'
 Bundle 'MarcWeber/vim-addon-mw-utils'
 Bundle 'garbas/vim-snipmate'
 Bundle 'daleroberts/vim-snippets'
+Bundle 'Valloric/YouCompleteMe'
 
 filetype plugin indent on
 syntax on
@@ -83,10 +73,11 @@ let g:ultisnips_python_style="sphinx"
 let g:syntastic_cpp_compiler = 'g++-4.7'
 let g:syntastic_cpp_compiler_options = ' -std=c++0x'
 let g:syntastic_check_on_open=1
-"let g:syntastic_python_checkers=["flake8"]
 let g:syntastic_python_checkers=["pylint"]
 let g:syntastic_matlab_checkers=["mlint"]
 let g:SuperTabDefaultCompletionType = "context"
+let g:ycm_confirm_extra_conf = 0
+let g:ycm_global_ycm_extra_conf = '~/.dotfiles/.ycm_extra_conf.py'
 
 nnoremap ; :
 nnoremap <silent> <C-l> :nohl<CR><C-l>
@@ -122,5 +113,6 @@ com! DiffSaved call DoDiffSaved()
 map <Leader>ds :DiffSaved<CR>
 
 autocmd FileType r setlocal tw=0 expandtab shiftwidth=2 tabstop=8 formatoptions+=croq softtabstop=2 autoindent textwidth=79 
+autocmd FileType cpp setlocal tw=0 expandtab shiftwidth=4 tabstop=8 formatoptions+=croq softtabstop=4 autoindent textwidth=79 
 autocmd FileType python setlocal tw=0 expandtab shiftwidth=4 tabstop=8 formatoptions+=croq softtabstop=4 autoindent textwidth=79 
 autocmd FileType python map <Leader>f :w<CR>:%!autopep8 %<CR>
