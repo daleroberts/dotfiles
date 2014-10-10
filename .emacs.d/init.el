@@ -1,5 +1,12 @@
 ;;; init --- Custom settings
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes (quote ("3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723" default))))
+
 (setf inhibit-startup-screen t
       inhibit-startup-message t
       inhibit-startup-echo-area-message t
@@ -31,6 +38,7 @@
 	auto-complete
         py-autopep8
 	autopair
+	smooth-scrolling
 	ess
 	epc
 	epl
@@ -143,6 +151,23 @@
 (require 'python)
 (setq python-shell-interpreter "ipython")
 (setq python-shell-interpreter-args "--pylab")
+
+;; C++
+
+(c-add-style "my-c++-style" 
+	     '("stroustrup"
+	       (indent-tabs-mode . nil) 
+	       (c-basic-offset . 4)
+	       (c-offsets-alist . ((inline-open . 0)
+				   (brace-list-open . 0)
+				   (statement-case-open . +)))))
+
+(defun my-c++-mode-hook ()
+  (c-set-style "my-c++-style")
+  (auto-fill-mode)         
+  (c-toggle-auto-hungry-state 1))
+
+(add-hook 'c++-mode-hook 'my-c++-mode-hook)
 
 ;; quit minibuffer
 
@@ -387,6 +412,13 @@
 ;; ess
 (require 'ess-site)
 
+;; smooth scroll
+
+(require 'smooth-scrolling)
+(setq smooth-scroll-margin 5)
+(setq scroll-conservatively 9999
+      scroll-preserve-screen-position t)
+
 ;; server
 ;;(load "server")
 ;;(unless (server-running-p) (server-start))
@@ -403,15 +435,3 @@
   (setq git-gutter:added-sign " ")
   (setq git-gutter:deleted-sign " ")
   (setq git-gutter:modified-sign " "))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes (quote ("3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723" default))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
