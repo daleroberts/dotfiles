@@ -9,11 +9,7 @@ Plugin 'sjl/gundo.vim'
 Plugin 'nanotech/jellybeans.vim'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'Valloric/YouCompleteMe'
-"Plugin 'scrooloose/syntastic'
-"Plugin 'tomtom/tlib_vim'
-"Plugin 'MarcWeber/vim-addon-mw-utils'
-"Plugin 'garbas/vim-snipmate'
-"Plugin 'daleroberts/vim-snippets'
+Plugin 'kien/ctrlp.vim'
 
 call vundle#end()
 filetype plugin indent on
@@ -102,7 +98,6 @@ map s <Leader><Leader>w
 map S <Leader><Leader>b
 nmap <CR> :write<CR>
 map <space> /\v
-map <Leader>a :wa\|:VimuxRunLastCommand<CR>
 
 if exists(":Tabularize")
   nmap <Leader>a= :Tabularize /=<CR>
@@ -127,4 +122,5 @@ map <Leader>ds :DiffSaved<CR>
 autocmd FileType r setlocal tw=0 expandtab shiftwidth=2 tabstop=8 formatoptions+=croq softtabstop=2 autoindent textwidth=79 
 autocmd FileType cpp setlocal tw=0 expandtab shiftwidth=4 tabstop=8 formatoptions+=croq softtabstop=4 autoindent textwidth=79 
 autocmd FileType python setlocal tw=0 expandtab shiftwidth=4 tabstop=8 formatoptions+=croq softtabstop=4 autoindent textwidth=79 
-autocmd FileType python map <Leader>f :w<CR>:%!autopep8 %<CR>
+autocmd FileType python map <Leader>f :w<CR>:%!autopep8 -a -a %<CR>
+autocmd FileType python set makeprg=pylint\ %
