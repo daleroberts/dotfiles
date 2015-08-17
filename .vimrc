@@ -1,24 +1,21 @@
 set nocompatible
 filetype off
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 
-Bundle 'gmarik/vundle'
-Bundle 'nanotech/jellybeans.vim'
-Bundle 'sjl/gundo.vim'
-Bundle 'airblade/vim-gitgutter'
-Bundle 'scrooloose/syntastic'
-Bundle 'tomtom/tlib_vim'
-Bundle 'MarcWeber/vim-addon-mw-utils'
-Bundle 'garbas/vim-snipmate'
-Bundle 'daleroberts/vim-snippets'
-Bundle 'Valloric/YouCompleteMe'
+Plugin 'gmarik/vundle'
+Plugin 'sjl/gundo.vim'
+Plugin 'nanotech/jellybeans.vim'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'kien/ctrlp.vim'
 
+call vundle#end()
 filetype plugin indent on
 syntax on
 
-"colorscheme jellybeans
+colorscheme jellybeans
 
 set autochdir
 set noautoread " tells vim not to automatically reload changed files
@@ -66,16 +63,27 @@ let g:ctrlp_cmd = 'CtrlPMixed'
 let g:gundo_width = 30
 let g:gundo_right = 1
 let g:tex_flavor='latex'
+
+let g:jedi#goto_assignments_command = ""
+let g:jedi#goto_definitions_command = "gd"
+let g:jedi#documentation_command = "K"
+let g:jedi#usages_command = ""
+let g:jedi#completions_command = ""
+let g:jedi#rename_command = ""
+let g:jedi#popup_on_dot = 0
+let g:jedi#popup_select_first = 0
+let g:jedi#show_call_signatures = 1
 let g:jedi#use_tabs_not_buffers = 0
-let g:jedi#popup_on_dot = 1
-let g:jedi#show_function_definition = "0"
+let g:jedi#auto_vim_configuration = 0
+
 let g:ultisnips_python_style="sphinx"
-let g:syntastic_cpp_compiler = 'g++-4.7'
-let g:syntastic_cpp_compiler_options = ' -std=c++0x'
+let g:syntastic_cpp_compiler = 'g++-4.9'
+let g:syntastic_cpp_compiler_options = ' -std=c++11'
 let g:syntastic_check_on_open=1
 let g:syntastic_python_checkers=["pylint"]
 let g:syntastic_matlab_checkers=["mlint"]
 let g:SuperTabDefaultCompletionType = "context"
+
 let g:ycm_confirm_extra_conf = 0
 let g:ycm_global_ycm_extra_conf = '~/.dotfiles/.ycm_extra_conf.py'
 
@@ -90,7 +98,6 @@ map s <Leader><Leader>w
 map S <Leader><Leader>b
 nmap <CR> :write<CR>
 map <space> /\v
-map <Leader>a :wa\|:VimuxRunLastCommand<CR>
 
 if exists(":Tabularize")
   nmap <Leader>a= :Tabularize /=<CR>
@@ -115,4 +122,5 @@ map <Leader>ds :DiffSaved<CR>
 autocmd FileType r setlocal tw=0 expandtab shiftwidth=2 tabstop=8 formatoptions+=croq softtabstop=2 autoindent textwidth=79 
 autocmd FileType cpp setlocal tw=0 expandtab shiftwidth=4 tabstop=8 formatoptions+=croq softtabstop=4 autoindent textwidth=79 
 autocmd FileType python setlocal tw=0 expandtab shiftwidth=4 tabstop=8 formatoptions+=croq softtabstop=4 autoindent textwidth=79 
-autocmd FileType python map <Leader>f :w<CR>:%!autopep8 %<CR>
+autocmd FileType python map <Leader>f :w<CR>:%!autopep8 -a -a %<CR>
+autocmd FileType python set makeprg=pylint\ %
