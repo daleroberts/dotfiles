@@ -5,12 +5,14 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes (quote ("3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723" default))))
+ '(custom-safe-themes
+   (quote
+    ("c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "c5a044ba03d43a725bd79700087dea813abcb6beb6be08c7eb3303ed90782482" "3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723" default))))
 
 (setf inhibit-startup-screen t
       inhibit-startup-message t
       inhibit-startup-echo-area-message t
-      visible-bell t
+      visible-bell nil
       column-number-mode nil
       size-indication-mode nil
       make-backup-files nil
@@ -124,6 +126,14 @@
 ;; Undo tree
 
 (global-undo-tree-mode -1)
+
+;; unfill
+
+(defun unfill-paragraph (&optional region)
+      "Takes a multi-line paragraph and makes it into a single line of text."
+      (interactive (progn (barf-if-buffer-read-only) '(t)))
+      (let ((fill-column (point-max)))
+        (fill-paragraph nil region)))
 
 ;; python
 
@@ -254,6 +264,7 @@
 (define-key evil-normal-state-map (kbd "<SPC>") 'isearch-forward)
 (define-key evil-normal-state-map (kbd "n") 'isearch-repeat-forward)
 (define-key evil-normal-state-map (kbd "Q") 'fill-paragraph)
+(define-key evil-normal-state-map (kbd "F") 'unfill-paragraph)
 (define-key evil-normal-state-map (kbd ";") 'evil-ex)
 (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
 (define-key evil-normal-state-map ",b" 'ibuffer)
@@ -325,6 +336,12 @@
     (ad-enable-advice 'isearch-repeat 'after 'isearch-no-fail)
     (ad-activate 'isearch-repeat)))
 
+;; word count
+
+(add-to-list 'load-path "~/.emacs.d/lisp")
+(autoload 'word-count-mode "word-count"
+           "Minor mode to count words." t nil)
+
 ;; surround
 
 (require 'evil-surround)
@@ -347,6 +364,7 @@
   (auto-save-mode 0)
   (flyspell-mode 1)
   (flycheck-mode 1)
+  (word-count-mode 1)
   (setq flycheck-chktexrc "~/.chktexrc")
   (setq TeX-command-default "makepdf")
   (visual-line-mode 1)
@@ -435,3 +453,9 @@
   (setq git-gutter:added-sign " ")
   (setq git-gutter:deleted-sign " ")
   (setq git-gutter:modified-sign " "))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
