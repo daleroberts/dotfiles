@@ -7,7 +7,10 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "c5a044ba03d43a725bd79700087dea813abcb6beb6be08c7eb3303ed90782482" "3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723" default))))
+    ("c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "c5a044ba03d43a725bd79700087dea813abcb6beb6be08c7eb3303ed90782482" "3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723" default)))
+ '(package-selected-packages
+   (quote
+    (yasnippet smooth-scrolling smart-mode-line py-autopep8 key-chord jedi google-c-style git-gutter flycheck fill-column-indicator exec-path-from-shell evil-surround evil-leader ess clang-format autopair auctex))))
 
 (setf inhibit-startup-screen t
       inhibit-startup-message t
@@ -24,7 +27,7 @@
   (tool-bar-mode 0)
   (set-scroll-bar-mode nil)
   (setq ns-pop-up-frames nil)
-  (set-frame-font "Consolas 12")
+  (set-frame-font "Menlo 11")
   (set-frame-size (selected-frame) 110 55))
 
 (when (not (window-system))
@@ -41,6 +44,7 @@
         py-autopep8
 	autopair
 	smooth-scrolling
+	clang-format
 	ess
 	epc
 	epl
@@ -127,6 +131,9 @@
 
 (global-undo-tree-mode -1)
 
+;; clang-format
+(require 'clang-format)
+
 ;; unfill
 
 (defun unfill-paragraph (&optional region)
@@ -138,6 +145,8 @@
 ;; python
 
 (defun my-python-mode-hook ()
+  (define-key evil-normal-state-map (kbd "s") 'jedi:goto-definition)
+  (define-key evil-normal-state-map (kbd "S") 'jedi:show-doc)
   (setq fill-column 72)
   (setq python-fill-docstring-style 'django)
   (setq jedi:complete-on-dot t)
@@ -175,7 +184,8 @@
 (defun my-c++-mode-hook ()
   (c-set-style "my-c++-style")
   (auto-fill-mode)         
-  (c-toggle-auto-hungry-state 1))
+  (c-toggle-auto-hungry-state 1)
+  (define-key evil-normal-state-map ",f" 'clang-format-buffer))
 
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 
@@ -238,8 +248,38 @@
 
 ;; scale fonts
 
-(global-set-key (kbd "C-+") 'text-scale-increase)
-(global-set-key (kbd "C--") 'text-scale-decrease)
+(defun font-name-replace-size (font-name new-size)
+  (let ((parts (split-string font-name "-")))
+    (setcar (nthcdr 7 parts) (format "%d" new-size))
+    (mapconcat 'identity parts "-")))
+
+(defun increment-default-font-height (delta)
+  "Adjust the default font height by DELTA on every frame.
+The pixel size of the frame is kept (approximately) the same.
+DELTA should be a multiple of 10, in the units used by the
+:height face attribute."
+  (let* ((new-height (+ (face-attribute 'default :height) delta))
+         (new-point-height (/ new-height 10)))
+    (dolist (f (frame-list))
+      (with-selected-frame f
+        ;; Latest 'set-frame-font supports a "frames" arg, but
+        ;; we cater to Emacs 23 by looping instead.
+        (set-frame-font (font-name-replace-size (face-font 'default)
+                                                new-point-height)
+                        t)))
+    (set-face-attribute 'default nil :height new-height)
+    (message "default font size is now %d" new-point-height)))
+
+(defun increase-default-font-height ()
+  (interactive)
+  (increment-default-font-height 10))
+
+(defun decrease-default-font-height ()
+  (interactive)
+  (increment-default-font-height -10))
+
+(global-set-key (kbd "s-=") 'increase-default-font-height)
+(global-set-key (kbd "s--") 'decrease-default-font-height)
 
 ;; evil
 

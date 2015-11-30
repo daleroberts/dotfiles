@@ -1,7 +1,7 @@
 set nocompatible
 filetype off
 
-set rtp+=~/.vim/bundle/Vundle.vim
+set rtp+=~/.vim/bundle/vundle
 call vundle#begin()
 
 Plugin 'gmarik/vundle'
@@ -15,7 +15,7 @@ call vundle#end()
 filetype plugin indent on
 syntax on
 
-colorscheme jellybeans
+"colorscheme jellybeans
 
 set autochdir
 set noautoread " tells vim not to automatically reload changed files
@@ -94,8 +94,8 @@ nnoremap k gk
 nnoremap U :GundoToggle<CR>
 vmap Q gq
 nmap Q gqap
-map s <Leader><Leader>w
-map S <Leader><Leader>b
+nmap s :YcmCompleter GoTo<CR>
+nmap S :YcmCompleter GetDoc<CR>
 nmap <CR> :write<CR>
 map <space> /\v
 
