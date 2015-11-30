@@ -1,0 +1,11 @@
+[user]
+	email = dale.o.roberts@gmail.com
+	name = Dale Roberts
+[color]
+	ui = true
+[alias]
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+[push]
+	default = simple
+[merge]
+	tool = vimdiff
