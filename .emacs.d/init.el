@@ -1,16 +1,15 @@
 ;;; init --- Custom settings
 
+(setf gc-cons-threshold 100000000)
+
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "c5a044ba03d43a725bd79700087dea813abcb6beb6be08c7eb3303ed90782482" "3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723" default)))
- '(package-selected-packages
-   (quote
-    (yasnippet smooth-scrolling smart-mode-line py-autopep8 key-chord jedi google-c-style git-gutter flycheck fill-column-indicator exec-path-from-shell evil-surround evil-leader ess clang-format autopair auctex))))
+    ("4d92881cb33ebf0fa3c2c2fb8dd3cf47a7aacdf9814b6c4a48e5b5c900afa3c9"
+     "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223"
+     "c5a044ba03d43a725bd79700087dea813abcb6beb6be08c7eb3303ed90782482"
+     "3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723"
+     default))))
 
 (setf inhibit-startup-screen t
       inhibit-startup-message t
@@ -33,7 +32,7 @@
 (when (not (window-system))
   (menu-bar-mode -1))
 
-;; install packages if needed
+;;; install packages if needed
 
 (setq package-archives '(("melpa" . "http://melpa.milkbox.net/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")))
@@ -69,219 +68,7 @@
   (unless (package-installed-p package)
     (package-install package)))
 
-;; 80 column
-
-(require 'fill-column-indicator)
-(setq fci-rule-use-dashes nil)
-(setq fci-always-use-textual-rule nil)
-(setq fci-rule-width 1)
-(setq fci-rule-color "gray")
-
-;; flyspell
-
-(setq ispell-program-name "aspell")
-(setq ispell-dictionary "british-ise")
-
-;; flycheck
-
-(defvar my-flycheck-minor-mode-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map "\M-p" 'flycheck-previous-error)
-    (define-key map "\M-n" 'flycheck-next-error)
-    map)
-  "Keymap for my flycheck minor mode.")
-
-(defun my-flymake-err-at (pos)
-  (let ((overlays (overlays-at pos)))
-    (remove nil
-            (mapcar (lambda (overlay)
-                      (and (overlay-get overlay 'flymake-overlay)
-                           (overlay-get overlay 'help-echo)))
-                    overlays))))
-
-(defun my-flymake-err-echo ()
-  (message "%s" (mapconcat 'identity (my-flymake-err-at (point)) "\n")))
-
-(defadvice flymake-goto-next-error (after display-message activate compile)
-  (my-flymake-err-echo))
-
-(defadvice flymake-goto-prev-error (after display-message activate compile)
-  (my-flymake-err-echo))
-
-(define-minor-mode my-flycheck-minor-mode
-  "Simple minor mode which adds some key bindings for moving to
-   the next and previous errors."
-  nil
-  nil
-  :keymap my-flycheck-minor-mode-map)
-
-;; Use the short version for yes/no
-
-(fset 'yes-or-no-p 'y-or-n-p)
-
-;; ibuffer
-
-(setq ibuffer-formats
-      '((mark modified read-only " "
-              (name 50 50 :left :elide) " "
-              filename-and-process)
-        (mark " " (name 16 -1) " " filename)))
-
-;; Undo tree
-
-(global-undo-tree-mode -1)
-
-;; clang-format
-(require 'clang-format)
-
-;; unfill
-
-(defun unfill-paragraph (&optional region)
-      "Takes a multi-line paragraph and makes it into a single line of text."
-      (interactive (progn (barf-if-buffer-read-only) '(t)))
-      (let ((fill-column (point-max)))
-        (fill-paragraph nil region)))
-
-;; python
-
-(defun my-python-mode-hook ()
-  (define-key evil-normal-state-map (kbd "s") 'jedi:goto-definition)
-  (define-key evil-normal-state-map (kbd "S") 'jedi:show-doc)
-  (setq fill-column 72)
-  (setq python-fill-docstring-style 'django)
-  (setq jedi:complete-on-dot t)
-  (set (make-local-variable 'comment-auto-fill-only-comments) t)
-  (toggle-truncate-lines 1)
-  (auto-fill-mode t)
-  (setq flycheck-python-pylint-executable "pylint")
-  (yas-minor-mode-on)
-  (flycheck-mode 1)
-  (jedi:setup)
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
-  (add-hook 'before-save-hook 'py-autopep8-before-save))
-
-(add-hook 'python-mode-hook 'fci-mode)
-(add-hook 'python-mode-hook 'autopair-mode)
-(add-hook 'python-mode-hook 'my-python-mode-hook)
-(add-hook 'python-mode-hook 'my-flycheck-minor-mode)
-
-(evil-leader/set-key-for-mode 'python-mode "f" 'py-autopep8)
-
-(require 'python)
-(setq python-shell-interpreter "ipython")
-(setq python-shell-interpreter-args "--pylab")
-
-;; C++
-
-(c-add-style "my-c++-style" 
-	     '("stroustrup"
-	       (indent-tabs-mode . nil) 
-	       (c-basic-offset . 4)
-	       (c-offsets-alist . ((inline-open . 0)
-				   (brace-list-open . 0)
-				   (statement-case-open . +)))))
-
-(defun my-c++-mode-hook ()
-  (c-set-style "my-c++-style")
-  (auto-fill-mode)         
-  (c-toggle-auto-hungry-state 1)
-  (define-key evil-normal-state-map ",f" 'clang-format-buffer))
-
-(add-hook 'c++-mode-hook 'my-c++-mode-hook)
-
-;; quit minibuffer
-
-(defun minibuffer-keyboard-quit ()
-  (interactive)
-  (if (and delete-selection-mode transient-mark-mode mark-active)
-      (setq deactivate-mark  t)
-    (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
-    (abort-recursive-edit)))
-
-;; buffers
-
-(defadvice next-buffer (after avoid-messages-buffer-in-next-buffer)
-  (when (string-match "^\\*" (buffer-name))
-    (next-buffer)))
-
-(defadvice previous-buffer (after avoid-messages-buffer-in-next-buffer)
-  (when (string-match "^\\*" (buffer-name))
-    (previous-buffer)))
-
-(ad-activate 'next-buffer)
-(ad-activate 'previous-buffer)
-
-;; show paren
-
-(setq show-paren-delay 0.1)
-(show-paren-mode 1)
-(setq blink-matching-paren nil)
-
-;; smooth-scroll
-
-(setq scroll-margin 3
-      scroll-conservatively 0
-      scroll-up-aggressively 0.01
-      scroll-down-aggressively 0.01)
-(setq-default scroll-up-aggressively 0.01
-	      scroll-down-aggressively 0.01)
-
-;; Make default encoding UTF-8 everywhere
-
-(setq current-language-environment "UTF-8")
-(prefer-coding-system 'utf-8)
-
-;; shell
-
-(autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
-(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-
-(defun shell ()
-  (interactive)
-  (term "/bin/bash"))
-
-;; frame width
-
-(defun toggle-frame-width ()
-  (interactive)
-  (set-frame-size (selected-frame) (if (= (frame-width) 192) 110 192) 55))
-
-;; scale fonts
-
-(defun font-name-replace-size (font-name new-size)
-  (let ((parts (split-string font-name "-")))
-    (setcar (nthcdr 7 parts) (format "%d" new-size))
-    (mapconcat 'identity parts "-")))
-
-(defun increment-default-font-height (delta)
-  "Adjust the default font height by DELTA on every frame.
-The pixel size of the frame is kept (approximately) the same.
-DELTA should be a multiple of 10, in the units used by the
-:height face attribute."
-  (let* ((new-height (+ (face-attribute 'default :height) delta))
-         (new-point-height (/ new-height 10)))
-    (dolist (f (frame-list))
-      (with-selected-frame f
-        ;; Latest 'set-frame-font supports a "frames" arg, but
-        ;; we cater to Emacs 23 by looping instead.
-        (set-frame-font (font-name-replace-size (face-font 'default)
-                                                new-point-height)
-                        t)))
-    (set-face-attribute 'default nil :height new-height)
-    (message "default font size is now %d" new-point-height)))
-
-(defun increase-default-font-height ()
-  (interactive)
-  (increment-default-font-height 10))
-
-(defun decrease-default-font-height ()
-  (interactive)
-  (increment-default-font-height -10))
-
-(global-set-key (kbd "s-=") 'increase-default-font-height)
-(global-set-key (kbd "s--") 'decrease-default-font-height)
-
-;; evil
+;;; evil
 
 (require 'evil)
 (evil-mode 1)
@@ -289,35 +76,45 @@ DELTA should be a multiple of 10, in the units used by the
 (global-evil-leader-mode)
 (evil-leader/set-leader ",")
 
-(evil-set-initial-state 'shell-mode 'insert)
 (evil-set-initial-state 'help-mode 'normal)
+(evil-set-initial-state 'shell-mode 'emacs)
+(evil-set-initial-state 'inferior-python-mode 'emacs)
 
 (setq evil-esc-delay 0)
 (setq evil-default-cursor 'bar)
 (setq evil-normal-state-cursor 'box)
 (setq evil-visual-state-cursor 'hollow)
 (setq evil-replace-state-cursor 'box)
+(setq evil-want-C-w-in-emacs-state t)
 
-;;(define-key evil-normal-state-map (kbd "<s-return>") 'toggle-frame-fullscreen)
 (define-key evil-normal-state-map (kbd "<s-return>") 'toggle-frame-width)
 
 (define-key evil-normal-state-map (kbd "<SPC>") 'isearch-forward)
 (define-key evil-normal-state-map (kbd "n") 'isearch-repeat-forward)
 (define-key evil-normal-state-map (kbd "Q") 'fill-paragraph)
-(define-key evil-normal-state-map (kbd "F") 'unfill-paragraph)
+(define-key evil-normal-state-map (kbd "U") 'unfill-paragraph)
 (define-key evil-normal-state-map (kbd ";") 'evil-ex)
 (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
 (define-key evil-normal-state-map ",b" 'ibuffer)
-(define-key evil-normal-state-map ",g" 'jedi:goto-definition)
-(define-key evil-normal-state-map (kbd "K") 'jedi:show-doc)
 (define-key evil-normal-state-map ",," 'evil-buffer)
 (define-key evil-normal-state-map "\C-s\C-s" 'evil-buffer)
 (define-key evil-normal-state-map ",s" 'shell)
+(define-key evil-normal-state-map (kbd "<RET>") 'evil-write)
+
 (define-key evil-normal-state-map (kbd "C-w <left>") 'evil-window-left)
 (define-key evil-normal-state-map (kbd "C-w <right>") 'evil-window-right)
 (define-key evil-normal-state-map (kbd "C-w <up>") 'evil-window-up)
 (define-key evil-normal-state-map (kbd "C-w <down>") 'evil-window-down)
-(define-key evil-normal-state-map (kbd "<RET>") 'evil-write)
+
+(define-key evil-emacs-state-map (kbd "C-w <left>") 'evil-window-left)
+(define-key evil-emacs-state-map (kbd "C-w <right>") 'evil-window-right)
+(define-key evil-emacs-state-map (kbd "C-w <up>") 'evil-window-up)
+(define-key evil-emacs-state-map (kbd "C-w <down>") 'evil-window-down)
+(define-key evil-emacs-state-map (kbd "C-w C-w") 'evil-window-next)
+(define-key evil-emacs-state-map (kbd "C-w v") 'evil-window-vsplit)
+(define-key evil-emacs-state-map (kbd "C-w s") 'evil-window-split)
+(define-key evil-emacs-state-map (kbd "C-w c") 'evil-window-delete)
+(define-key evil-emacs-state-map (kbd "<escape>") 'evil-normal-state)
 
 (define-key evil-visual-state-map (kbd ";") 'evil-ex)
 (define-key evil-visual-state-map (kbd "f") 'indent-region)
@@ -354,9 +151,232 @@ DELTA should be a multiple of 10, in the units used by the
 (key-chord-define evil-normal-state-map "ee" 'eval-buffer)
 (key-chord-define evil-normal-state-map ";;" 'eval-expression)
 (key-chord-define evil-insert-state-map ",," 'evil-buffer)
+(key-chord-define evil-emacs-state-map ",," 'evil-buffer)
 (key-chord-mode 1)
 
-;; isearch
+;;; 80 column
+
+(when (window-system)
+  (require 'fill-column-indicator)
+  (setq fci-rule-use-dashes nil)
+  (setq fci-always-use-textual-rule nil)
+  (setq fci-rule-width 1)
+  (setq fci-rule-color "gray"))
+
+;;; flyspell
+
+(setq ispell-program-name "aspell")
+(setq ispell-dictionary "british-ise")
+
+;;; flycheck
+
+(defvar my-flycheck-minor-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "\M-p" 'flycheck-previous-error)
+    (define-key map "\M-n" 'flycheck-next-error)
+    map)
+  "Keymap for my flycheck minor mode.")
+
+(defun my-flymake-err-at (pos)
+  (let ((overlays (overlays-at pos)))
+    (remove nil
+            (mapcar (lambda (overlay)
+                      (and (overlay-get overlay 'flymake-overlay)
+                           (overlay-get overlay 'help-echo)))
+                    overlays))))
+
+(defun my-flymake-err-echo ()
+  (message "%s" (mapconcat 'identity (my-flymake-err-at (point)) "\n")))
+
+(defadvice flymake-goto-next-error (after display-message activate compile)
+  (my-flymake-err-echo))
+
+(defadvice flymake-goto-prev-error (after display-message activate compile)
+  (my-flymake-err-echo))
+
+(define-minor-mode my-flycheck-minor-mode
+  "Simple minor mode which adds some key bindings for moving to
+   the next and previous errors."
+  nil
+  nil
+  :keymap my-flycheck-minor-mode-map)
+
+;;; Use the short version for yes/no
+
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;;; ibuffer
+
+(setq ibuffer-formats
+      '((mark modified read-only " "
+              (name 50 50 :left :elide) " "
+              filename-and-process)
+        (mark " " (name 16 -1) " " filename)))
+
+;;; Undo tree
+
+(global-undo-tree-mode -1)
+
+;;; unfill
+
+(defun unfill-paragraph (&optional region)
+      "Takes a multi-line paragraph and makes it into a single line of text."
+      (interactive (progn (barf-if-buffer-read-only) '(t)))
+      (let ((fill-column (point-max)))
+        (fill-paragraph nil region)))
+
+;;; python
+
+(setq py-python-command "/usr/local/bin/python3")
+
+(defun my-python-mode-hook ()
+  (require 'python)
+
+  (setq python-shell-interpreter "ipython")
+  (setq python-shell-interpreter-args "--pylab")
+  (setq flycheck-python-pylint-executable "pylint")
+
+  (jedi:setup)
+  (define-key evil-normal-state-map (kbd "s") 'jedi:goto-definition)
+  (define-key evil-normal-state-map (kbd "S") 'jedi:show-doc)
+  (evil-leader/set-key-for-mode 'python-mode "f" 'py-autopep8)
+  (evil-leader/set-key-for-mode 'python-mode "e" 'python-shell-send-region)
+  (setq jedi:complete-on-dot t)
+  
+  (setq python-fill-docstring-style 'django)
+  (set (make-local-variable 'comment-auto-fill-only-comments) t)
+  (toggle-truncate-lines 1)
+  (setq fill-column 72)
+  (auto-fill-mode t)
+  
+  (yas-minor-mode-on)
+  (flycheck-mode 1)
+  
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+  (add-hook 'before-save-hook 'py-autopep8-before-save))
+
+(add-hook 'python-mode-hook 'fci-mode)
+(add-hook 'python-mode-hook 'autopair-mode)
+(add-hook 'python-mode-hook 'my-python-mode-hook)
+(add-hook 'python-mode-hook 'my-flycheck-minor-mode)
+
+
+;;; C++
+
+(c-add-style "my-c++-style" 
+	     '("stroustrup"
+	       (indent-tabs-mode . nil) 
+	       (c-basic-offset . 2)
+	       (c-offsets-alist . ((inline-open . 0)
+				   (brace-list-open . 0)
+				   (statement-case-open . +)))))
+
+(defun my-c++-mode-hook ()
+  (require 'clang-format)
+  (c-set-style "my-c++-style")
+  (auto-fill-mode)         
+  (c-toggle-auto-hungry-state 1)
+  (define-key evil-normal-state-map ",f" 'clang-format-buffer))
+
+(add-hook 'c++-mode-hook 'my-c++-mode-hook)
+
+;;; quit minibuffer
+
+(defun minibuffer-keyboard-quit ()
+  (interactive)
+  (if (and delete-selection-mode transient-mark-mode mark-active)
+      (setq deactivate-mark  t)
+    (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
+    (abort-recursive-edit)))
+
+;;; buffers
+
+(defadvice next-buffer (after avoid-messages-buffer-in-next-buffer)
+  (when (or (string-match "^\\*scratch" (buffer-name))
+	    (string-match "^\\*Messages" (buffer-name))
+	    (string-match "^\\*Backtrace" (buffer-name)))
+    (next-buffer)))
+
+(defadvice previous-buffer (after avoid-messages-buffer-in-next-buffer)
+  (when (or (string-match "^\\*scratch" (buffer-name))
+	    (string-match "^\\*Messages" (buffer-name))
+	    (string-match "^\\*Backtrace" (buffer-name)))
+    (previous-buffer)))
+
+(ad-activate 'next-buffer)
+(ad-activate 'previous-buffer)
+
+;;; show paren
+
+(setq show-paren-delay 0.1)
+(show-paren-mode 1)
+(setq blink-matching-paren nil)
+
+;;; UTF-8 everywhere
+
+(setq current-language-environment "UTF-8")
+(prefer-coding-system 'utf-8)
+
+;;; shell
+
+(eval-after-load 'shell
+  '(progn
+     (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
+     (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on t)
+     t))
+
+(defun oleh-term-exec-hook ()
+  (let* ((buff (current-buffer))
+	 (proc (get-buffer-process buff)))
+    (set-process-sentinel
+     proc
+     `(lambda (process event)
+	(if (string= event "finished\n")
+	    (kill-buffer ,buff))))))
+
+(add-hook 'term-exec-hook 'oleh-term-exec-hook)
+
+(defun shell ()
+  (interactive)
+  (term "/bin/bash"))
+
+(setq explicit-shell-file-name "/bin/bash")
+
+;;; frame width
+
+(defun toggle-frame-width ()
+  (interactive)
+  (set-frame-size (selected-frame) (if (= (frame-width) 192) 110 192) 55))
+
+;;; scale fonts
+
+(defun font-name-replace-size (font-name new-size)
+  (let ((parts (split-string font-name "-")))
+    (setcar (nthcdr 7 parts) (format "%d" new-size))
+    (mapconcat 'identity parts "-")))
+
+(defun increment-default-font-height (delta)
+  (let* ((new-height (+ (face-attribute 'default :height) delta))
+         (new-point-height (/ new-height 10)))
+    (dolist (f (frame-list))
+      (with-selected-frame f
+        (set-frame-font (font-name-replace-size (face-font 'default)
+						new-point-height) t)))
+    (set-face-attribute 'default nil :height new-height)
+    (message "default font size is now %d" new-point-height)))
+
+(defun increase-default-font-height ()
+  (interactive)
+  (increment-default-font-height 10))
+
+(defun decrease-default-font-height ()
+  (interactive)
+  (increment-default-font-height -10))
+
+(global-set-key (kbd "s-=") 'increase-default-font-height)
+(global-set-key (kbd "s--") 'decrease-default-font-height)
+
+;;; isearch
 
 (add-hook 'isearch-mode-end-hook 'my-goto-match-beginning)
 (defun my-goto-match-beginning ()
@@ -376,18 +396,18 @@ DELTA should be a multiple of 10, in the units used by the
     (ad-enable-advice 'isearch-repeat 'after 'isearch-no-fail)
     (ad-activate 'isearch-repeat)))
 
-;; word count
+;;; word count
 
 (add-to-list 'load-path "~/.emacs.d/lisp")
 (autoload 'word-count-mode "word-count"
            "Minor mode to count words." t nil)
 
-;; surround
+;;; surround
 
 (require 'evil-surround)
 (global-evil-surround-mode 1)
 
-;; latex
+;;; latex
 
 (defun my-latex-chgenv ()
   (interactive)
@@ -398,6 +418,10 @@ DELTA should be a multiple of 10, in the units used by the
        (or (car (cdr env-tail))
 	   (car env-cycle))))))
 
+(defun TeX-texify ()
+  (interactive)
+  (save-buffer)
+  (TeX-command-menu "makepdf"))
 
 (defun my-latex-mode-hook ()
   (undo-tree-mode 0)
@@ -411,6 +435,8 @@ DELTA should be a multiple of 10, in the units used by the
   (auto-revert-mode 1)
   (yas-minor-mode-on)
   (yas-reload-all)
+  (evil-leader/set-key-for-mode 'latex-mode "r" 'TeX-texify)
+  (evil-leader/set-key-for-mode 'latex-mode "c" 'my-latex-chgenv)
   (setq ispell-parser 'tex)
   (fset 'font-latex-fontify-script nil)
   (fset 'tex-font-lock-subscript 'ignore))
@@ -428,29 +454,21 @@ DELTA should be a multiple of 10, in the units used by the
               '("makepdf" "makepdf2 %n %b" TeX-run-TeX nil t
                 :help "Run makepdf on file")))
 
-(defun TeX-texify ()
-  (interactive)
-  (save-buffer)
-  (TeX-command-menu "makepdf"))
-
-(evil-leader/set-key-for-mode 'latex-mode "r" 'TeX-texify)
-(evil-leader/set-key-for-mode 'latex-mode "c" 'my-latex-chgenv)
-
-;; gitgutter
+;;; gitgutter
 
 (global-git-gutter-mode 1)
 
-;; color theme
+;;; color theme
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d")
 (if window-system (load-theme 'dr t))
 
-;; yasnippet
+;;; yasnippet
 
 (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
 (require 'yasnippet)
 
-;; paths
+;;; paths
 
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize)
@@ -458,30 +476,21 @@ DELTA should be a multiple of 10, in the units used by the
   (exec-path-from-shell-copy-env "PS1")
   )
 
-;; smart-mode-line
+;;; smart-mode-line
 
-(setq sml/theme 'respectful)
-(setq sml/name-width 20)
-(setq sml/mode-width 5)
-(setq sml/shorten-directory 't)
-(setq sml/shorten-mode 't)
-(sml/setup)
+(when (window-system)
+  (setq sml/theme 'respectful)
+  (setq sml/name-width 20)
+  (setq sml/mode-width 5)
+  (setq sml/shorten-directory 't)
+  (setq sml/shorten-mode 't)
+  (sml/setup))
 
-;; ess
-(require 'ess-site)
-
-;; smooth scroll
-
-(require 'smooth-scrolling)
-(setq smooth-scroll-margin 5)
-(setq scroll-conservatively 9999
-      scroll-preserve-screen-position t)
-
-;; server
+;;; server
 ;;(load "server")
 ;;(unless (server-running-p) (server-start))
 
-;; colors
+;;; colors
 
 (when window-system
   (set-face-foreground 'git-gutter:modified "#000000")
@@ -493,9 +502,6 @@ DELTA should be a multiple of 10, in the units used by the
   (setq git-gutter:added-sign " ")
   (setq git-gutter:deleted-sign " ")
   (setq git-gutter:modified-sign " "))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
+(setf gc-cons-threshold 20000000)
+(setq inhibit-default-init t)

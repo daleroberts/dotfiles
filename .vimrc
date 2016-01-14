@@ -51,7 +51,7 @@ set fillchars=vert:\│
 set colorcolumn=79
 
 if version >= 701
-  set rnu "" relative line numbers
+  "set rnu "" relative line numbers
   set undodir=~/undo
   set undofile
 endif
@@ -122,5 +122,6 @@ map <Leader>ds :DiffSaved<CR>
 autocmd FileType r setlocal tw=0 expandtab shiftwidth=2 tabstop=8 formatoptions+=croq softtabstop=2 autoindent textwidth=79 
 autocmd FileType cpp setlocal tw=0 expandtab shiftwidth=4 tabstop=8 formatoptions+=croq softtabstop=4 autoindent textwidth=79 
 autocmd FileType python setlocal tw=0 expandtab shiftwidth=4 tabstop=8 formatoptions+=croq softtabstop=4 autoindent textwidth=79 
+autocmd FileType pyrex setlocal tw=0 expandtab shiftwidth=4 tabstop=8 formatoptions+=croq softtabstop=4 autoindent textwidth=79 
 autocmd FileType python map <Leader>f :w<CR>:%!autopep8 -a -a %<CR>
 autocmd FileType python set makeprg=pylint\ %

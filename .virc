@@ -35,7 +35,7 @@ set fillchars=vert:\│
 set colorcolumn=79
 
 if version >= 701
-  set rnu "" relative line numbers
+  "set rnu "" relative line numbers
   set undodir=~/undo
   set undofile
 endif
