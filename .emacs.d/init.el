@@ -2,15 +2,6 @@
 
 (setf gc-cons-threshold 100000000)
 
-(custom-set-variables
- '(custom-safe-themes
-   (quote
-    ("4d92881cb33ebf0fa3c2c2fb8dd3cf47a7aacdf9814b6c4a48e5b5c900afa3c9"
-     "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223"
-     "c5a044ba03d43a725bd79700087dea813abcb6beb6be08c7eb3303ed90782482"
-     "3a727bdc09a7a141e58925258b6e873c65ccf393b2240c51553098ca93957723"
-     default))))
-
 (setf inhibit-startup-screen t
       inhibit-startup-message t
       inhibit-startup-echo-area-message t
@@ -461,7 +452,8 @@
 ;;; color theme
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d")
-(if window-system (load-theme 'dr t))
+;(if window-system (load-theme 'dr t))
+(if window-system (load-theme 'protonopia t))
 
 ;;; yasnippet
 
@@ -478,13 +470,13 @@
 
 ;;; smart-mode-line
 
-(when (window-system)
-  (setq sml/theme 'respectful)
-  (setq sml/name-width 20)
-  (setq sml/mode-width 5)
-  (setq sml/shorten-directory 't)
-  (setq sml/shorten-mode 't)
-  (sml/setup))
+;(when (window-system)
+;  (setq sml/theme 'respectful)
+;  (setq sml/name-width 20)
+;  (setq sml/mode-width 5)
+;  (setq sml/shorten-directory 't)
+;  (setq sml/shorten-mode 't)
+;  (sml/setup))
 
 ;;; server
 ;;(load "server")
@@ -492,16 +484,16 @@
 
 ;;; colors
 
-(when window-system
-  (set-face-foreground 'git-gutter:modified "#000000")
-  (set-face-background 'git-gutter:modified "#47D6D6")
-  (set-face-background 'git-gutter:added "#59C44B")
-  (set-face-foreground 'git-gutter:added "#000000")
-  (set-face-foreground 'git-gutter:deleted "#000000")
-  (set-face-background 'git-gutter:deleted "#D64747")
-  (setq git-gutter:added-sign " ")
-  (setq git-gutter:deleted-sign " ")
-  (setq git-gutter:modified-sign " "))
+;(when window-system
+;  (set-face-foreground 'git-gutter:modified "#000000")
+;  (set-face-background 'git-gutter:modified "#47D6D6")
+;  (set-face-background 'git-gutter:added "#59C44B")
+;  (set-face-foreground 'git-gutter:added "#000000")
+;  (set-face-foreground 'git-gutter:deleted "#000000")
+;  (set-face-background 'git-gutter:deleted "#D64747")
+;  (setq git-gutter:added-sign " ")
+;  (setq git-gutter:deleted-sign " ")
+;  (setq git-gutter:modified-sign " "))
 
 (setf gc-cons-threshold 20000000)
 (setq inhibit-default-init t)
