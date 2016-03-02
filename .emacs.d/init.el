@@ -418,7 +418,7 @@
   (undo-tree-mode 0)
   (auto-save-mode 0)
   (flyspell-mode 1)
-  (flycheck-mode 1)
+  (flycheck-mode 0)
   (word-count-mode 1)
   (setq flycheck-chktexrc "~/.chktexrc")
   (setq TeX-command-default "makepdf")
