@@ -21,6 +21,7 @@
       (armygreen "#9dac3b")
       (green "#afd50d")
       (vermillion "#d55e00")
+      (purple "#fe43ff")
       (redpurple "#cc79a7")
       (bluegray "#848ea9")) 
   (custom-theme-set-faces
@@ -55,7 +56,7 @@
    `(font-lock-constant-face ((,class (:foreground ,white))))
    `(font-lock-doc-face ((,class (:foreground ,white))))
    `(font-lock-doc-string-face ((,class (:foreground ,white))))
-   `(font-lock-function-name-face ((,class (:foreground ,white))))
+   `(font-lock-function-name-face ((,class (:foreground ,purple))))
    `(font-lock-keyword-face ((,class (:foreground ,cyan))))
    `(font-lock-preprocessor-face ((,class (:foreground ,white))))
    `(font-lock-reference-face ((,class (:foreground ,white))))
