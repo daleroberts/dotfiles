@@ -30,11 +30,14 @@
 
 (setq package-list
       '(auctex
+	visual-regexp-steroids
 	auto-complete
         py-autopep8
 	autopair
 	smooth-scrolling
 	clang-format
+	cython-mode
+	cuda-mode
 	ess
 	epc
 	epl
@@ -58,6 +61,7 @@
 (dolist (package package-list)
   (unless (package-installed-p package)
     (package-install package)))
+
 
 ;;; evil
 
@@ -144,6 +148,18 @@
 (key-chord-define evil-insert-state-map ",," 'evil-buffer)
 (key-chord-define evil-emacs-state-map ",," 'evil-buffer)
 (key-chord-mode 1)
+
+(setq mac-command-modifier 'super)
+(global-set-key (kbd "s-<right>") 'evil-next-buffer)
+(global-set-key (kbd "s-<left>") 'evil-prev-buffer)
+
+;;; better regex
+
+(require 'visual-regexp-steroids)
+
+(define-key evil-normal-state-map (kbd "<SPC>") 'vr/isearch-forward)
+(define-key evil-normal-state-map (kbd "R") 'vr/replace)
+(define-key evil-normal-state-map (kbd "S") 'vr/query-replace)
 
 ;;; 80 column
 
@@ -308,31 +324,6 @@
 (setq current-language-environment "UTF-8")
 (prefer-coding-system 'utf-8)
 
-;;; shell
-
-(eval-after-load 'shell
-  '(progn
-     (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
-     (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on t)
-     t))
-
-(defun oleh-term-exec-hook ()
-  (let* ((buff (current-buffer))
-	 (proc (get-buffer-process buff)))
-    (set-process-sentinel
-     proc
-     `(lambda (process event)
-	(if (string= event "finished\n")
-	    (kill-buffer ,buff))))))
-
-(add-hook 'term-exec-hook 'oleh-term-exec-hook)
-
-(defun shell ()
-  (interactive)
-  (term "/bin/bash"))
-
-(setq explicit-shell-file-name "/bin/bash")
-
 ;;; frame width
 
 (defun toggle-frame-width ()
@@ -444,6 +435,30 @@
   '(add-to-list 'TeX-command-list
               '("makepdf" "makepdf2 %n %b" TeX-run-TeX nil t
                 :help "Run makepdf on file")))
+
+;; shell mode
+
+(defadvice shell (before advice-utf-shell activate)
+  (set-default-coding-systems 'utf-8))
+
+(ad-activate 'shell)
+
+(defun my-shell-mode-hook ()
+  (local-set-key (kbd "C-u") 'eshell-kill-input)
+  (local-set-key (kbd "C-c C-k") 'kill-line)
+  
+  (define-key shell-mode-map "\C-z" 'comint-stop-subjob)
+  (define-key shell-mode-map "\C-c" 'comint-interrupt-subjob)
+  (define-key shell-mode-map "\C-w" 'backward-kill-word)
+  (define-key shell-mode-map "\C-l" 'comint-delete-output)
+  (define-key shell-mode-map "\C-d" 'comint-delchar-or-maybe-eof)
+  (define-key shell-mode-map "\C-p" 'comint-previous-input)
+  (define-key shell-mode-map "\C-n" 'comint-next-input)
+  (define-key shell-mode-map [up] 'comint-previous-input)
+  (define-key shell-mode-map [down] 'comint-next-input))
+
+
+(add-hook 'shell-mode-hook 'my-shell-mode-hook)
 
 ;;; gitgutter
 
