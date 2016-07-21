@@ -16,6 +16,7 @@ filetype plugin indent on
 syntax on
 
 "colorscheme jellybeans
+colorscheme zellner
 
 set autochdir
 set noautoread " tells vim not to automatically reload changed files

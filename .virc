@@ -1,15 +1,15 @@
 set nocompatible
 syntax on
 
+colorscheme zellner
+
 set autochdir
 set noautoread " tells vim not to automatically reload changed files
 set modeline
 set scrolloff=6 "" keep cursor away from edge
 set visualbell "" no beep
-set ruler "" show line and col number
 set autowrite "" write file on make
 set autoindent
-set ttyfast
 set backspace=indent,eol,start
 set ignorecase
 set smartcase
@@ -30,9 +30,14 @@ set t_Co=256
 set splitbelow
 set splitright
 set diffopt=vertical,filler,context:1000000 
-set mouse=a
 set fillchars=vert:\│
-"set colorcolumn=79
+
+set noshowmatch
+set nocursorline
+set nocursorcolumn
+set nottyfast
+set lazyredraw
+set scrolljump=8
 
 if version >= 701
   "set rnu "" relative line numbers
@@ -58,4 +63,5 @@ hi EasyMotionTarget ctermbg=none ctermfg=green guifg=#F6AA11
 autocmd FileType r setlocal tw=0 expandtab shiftwidth=2 tabstop=8 formatoptions+=croq softtabstop=2 autoindent textwidth=79 
 autocmd FileType cpp setlocal tw=0 expandtab shiftwidth=4 tabstop=8 formatoptions+=croq softtabstop=4 autoindent textwidth=79 
 autocmd FileType python setlocal tw=0 expandtab shiftwidth=4 tabstop=8 formatoptions+=croq softtabstop=4 autoindent textwidth=79 
+autocmd FileType pyrex setlocal tw=0 expandtab shiftwidth=4 tabstop=8 formatoptions+=croq softtabstop=4 autoindent textwidth=79 
 autocmd FileType python map <Leader>f :w<CR>:%!autopep8 %<CR>
