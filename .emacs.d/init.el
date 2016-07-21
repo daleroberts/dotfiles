@@ -17,8 +17,7 @@
   (tool-bar-mode 0)
   (set-scroll-bar-mode nil)
   (setq ns-pop-up-frames nil)
-  (set-frame-font "Menlo 11")
-  (set-frame-size (selected-frame) 110 55))
+  (set-frame-font "Menlo 11"))
 
 (when (not (window-system))
   (menu-bar-mode -1))
@@ -30,16 +29,20 @@
 
 (setq package-list
       '(auctex
+	visual-regexp-steroids
 	auto-complete
         py-autopep8
 	autopair
 	smooth-scrolling
 	clang-format
+	cython-mode
+	cuda-mode
 	ess
 	epc
 	epl
 	evil
 	evil-leader
+	evil-tabs
 	fill-column-indicator
 	flycheck
 	git-gutter
@@ -58,6 +61,11 @@
 (dolist (package package-list)
   (unless (package-installed-p package)
     (package-install package)))
+
+;; keyboard
+
+(setq mac-command-modifier 'super)
+(global-set-key (kbd "s-p") 'nil)
 
 ;;; evil
 
@@ -78,7 +86,7 @@
 (setq evil-replace-state-cursor 'box)
 (setq evil-want-C-w-in-emacs-state t)
 
-(define-key evil-normal-state-map (kbd "<s-return>") 'toggle-frame-width)
+;(define-key evil-normal-state-map (kbd "<s-return>") 'toggle-frame-width)
 
 (define-key evil-normal-state-map (kbd "<SPC>") 'isearch-forward)
 (define-key evil-normal-state-map (kbd "n") 'isearch-repeat-forward)
@@ -89,6 +97,7 @@
 (define-key evil-normal-state-map ",b" 'ibuffer)
 (define-key evil-normal-state-map ",," 'evil-buffer)
 (define-key evil-normal-state-map "\C-s\C-s" 'evil-buffer)
+(define-key evil-normal-state-map ",p" 'run-python)
 (define-key evil-normal-state-map ",s" 'shell)
 (define-key evil-normal-state-map (kbd "<RET>") 'evil-write)
 
@@ -96,6 +105,11 @@
 (define-key evil-normal-state-map (kbd "C-w <right>") 'evil-window-right)
 (define-key evil-normal-state-map (kbd "C-w <up>") 'evil-window-up)
 (define-key evil-normal-state-map (kbd "C-w <down>") 'evil-window-down)
+
+(define-key evil-normal-state-map (kbd "<s-left>") 'evil-window-left)
+(define-key evil-normal-state-map (kbd "<s-right>") 'evil-window-right)
+(define-key evil-normal-state-map (kbd "<s-up>") 'evil-window-up)
+(define-key evil-normal-state-map (kbd "<s-down>") 'evil-window-down)
 
 (define-key evil-emacs-state-map (kbd "C-w <left>") 'evil-window-left)
 (define-key evil-emacs-state-map (kbd "C-w <right>") 'evil-window-right)
@@ -144,6 +158,14 @@
 (key-chord-define evil-insert-state-map ",," 'evil-buffer)
 (key-chord-define evil-emacs-state-map ",," 'evil-buffer)
 (key-chord-mode 1)
+
+;;; better regex
+
+(require 'visual-regexp-steroids)
+
+(define-key evil-normal-state-map (kbd "<SPC>") 'vr/isearch-forward)
+(define-key evil-normal-state-map (kbd "R") 'vr/replace)
+(define-key evil-normal-state-map (kbd "S") 'vr/query-replace)
 
 ;;; 80 column
 
@@ -204,6 +226,8 @@
               filename-and-process)
         (mark " " (name 16 -1) " " filename)))
 
+ (setq ibuffer-default-sorting-mode 'alphabetic)
+
 ;;; Undo tree
 
 (global-undo-tree-mode -1)
@@ -219,20 +243,46 @@
 ;;; python
 
 (setq py-python-command "/usr/local/bin/python3")
+(setq python-shell-interpreter "ipython3")
+(setq python-shell-interpreter-args "--pprint -c \"import numpy as np; import pandas as pd\" -i")
+
+(defun current-line-empty-p ()
+  (save-excursion
+    (beginning-of-line)
+    (looking-at "[[:space:]]*$")))
+
+(defun my-python-send-region (&optional beg end)
+  (interactive)
+  (let ((beg (cond (beg beg)
+		   ((region-active-p)
+		    (region-beginning))
+		   (t (line-beginning-position))))
+	(end (cond (end end)
+		   ((region-active-p)
+		    (copy-marker (region-end)))
+		   (t (line-end-position)))))
+    (if (not (string-match-p "^\s*$" (buffer-substring beg end)))
+	(python-shell-send-region beg end))
+    (copy-region-as-kill beg end)
+    (move-beginning-of-line 1)
+    (next-line)))
 
 (defun my-python-mode-hook ()
   (require 'python)
 
-  (setq python-shell-interpreter "ipython")
-  (setq python-shell-interpreter-args "--pylab")
   (setq flycheck-python-pylint-executable "pylint")
+  (setq jedi:environment-root "jedi")
+  ;(setq elpy-rpc-python-command "python3")
 
   (jedi:setup)
+  (setq jedi:complete-on-dot t)
+
   (define-key evil-normal-state-map (kbd "s") 'jedi:goto-definition)
   (define-key evil-normal-state-map (kbd "S") 'jedi:show-doc)
+  (define-key evil-normal-state-map (kbd "<s-return>") 'my-python-send-region)
+
   (evil-leader/set-key-for-mode 'python-mode "f" 'py-autopep8)
   (evil-leader/set-key-for-mode 'python-mode "e" 'python-shell-send-region)
-  (setq jedi:complete-on-dot t)
   
   (setq python-fill-docstring-style 'django)
   (set (make-local-variable 'comment-auto-fill-only-comments) t)
@@ -307,31 +357,6 @@
 
 (setq current-language-environment "UTF-8")
 (prefer-coding-system 'utf-8)
-
-;;; shell
-
-(eval-after-load 'shell
-  '(progn
-     (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
-     (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on t)
-     t))
-
-(defun oleh-term-exec-hook ()
-  (let* ((buff (current-buffer))
-	 (proc (get-buffer-process buff)))
-    (set-process-sentinel
-     proc
-     `(lambda (process event)
-	(if (string= event "finished\n")
-	    (kill-buffer ,buff))))))
-
-(add-hook 'term-exec-hook 'oleh-term-exec-hook)
-
-(defun shell ()
-  (interactive)
-  (term "/bin/bash"))
-
-(setq explicit-shell-file-name "/bin/bash")
 
 ;;; frame width
 
@@ -445,6 +470,74 @@
               '("makepdf" "makepdf2 %n %b" TeX-run-TeX nil t
                 :help "Run makepdf on file")))
 
+;; shell mode
+
+(defadvice shell (before advice-utf-shell activate)
+  (set-default-coding-systems 'utf-8))
+
+(ad-activate 'shell)
+
+(defun my-shell-mode-hook ()
+  (setq ansi-color-names-vector
+	["black" "tomato" "PaleGreen2" "gold1"
+	 "DeepSkyBlue1" "MediumOrchid1" "cyan" "white"])
+  (setq ansi-color-map (ansi-color-make-color-map))
+  
+  (local-set-key (kbd "C-u") 'eshell-kill-input)
+  (local-set-key (kbd "C-k") 'kill-line)
+  (local-set-key (kbd "C-a") 'move-beginning-of-line)
+  (local-set-key (kbd "C-e") 'move-end-of-line)
+  (local-set-key (kbd "<s-left>") 'evil-window-left)
+  (local-set-key (kbd "<s-right>") 'evil-window-right)
+  (local-set-key (kbd "<s-up>") 'evil-window-up)
+  (local-set-key (kbd "<s-down>") 'evil-window-down)
+  (local-set-key (kbd "C-w c") 'evil-window-delete)
+
+  (define-key shell-mode-map "\C-a" 'move-beginning-of-line)
+  (define-key shell-mode-map "\C-z" 'comint-stop-subjob)
+  (define-key shell-mode-map "\C-c" 'comint-interrupt-subjob)
+  (define-key shell-mode-map "\C-w" 'backward-kill-word)
+  (define-key shell-mode-map "\C-l" 'comint-delete-output)
+  (define-key shell-mode-map "\C-d" 'comint-delchar-or-maybe-eof)
+  (define-key shell-mode-map "\C-p" 'comint-previous-input)
+  (define-key shell-mode-map "\C-n" 'comint-next-input)
+  (define-key shell-mode-map [up] 'comint-previous-input)
+  (define-key shell-mode-map [down] 'comint-next-input))
+
+
+(add-hook 'shell-mode-hook 'my-shell-mode-hook)
+
+;;; inferior python
+
+(defun my-inferior-python-mode-hook ()
+  (setq ansi-color-names-vector
+	["black" "tomato" "PaleGreen2" "gold1"
+	 "DeepSkyBlue1" "MediumOrchid1" "cyan" "white"])
+  (setq ansi-color-map (ansi-color-make-color-map))
+  
+  (local-set-key (kbd "C-u") 'eshell-kill-input)
+  (local-set-key (kbd "C-k") 'kill-line)
+  (local-set-key (kbd "C-a") 'move-beginning-of-line)
+  (local-set-key (kbd "C-e") 'move-end-of-line)
+  (local-set-key (kbd "<s-left>") 'evil-window-left)
+  (local-set-key (kbd "<s-right>") 'evil-window-right)
+  (local-set-key (kbd "<s-up>") 'evil-window-up)
+  (local-set-key (kbd "<s-down>") 'evil-window-down)
+  (local-set-key (kbd "C-w c") 'evil-window-delete)
+
+  (local-set-key "\C-a" 'move-beginning-of-line)
+  (local-set-key "\C-z" 'comint-stop-subjob)
+  (local-set-key "\C-c" 'comint-interrupt-subjob)
+  (local-set-key "\C-w" 'backward-kill-word)
+  (local-set-key "\C-l" 'comint-delete-output)
+  (local-set-key "\C-d" 'comint-delchar-or-maybe-eof)
+  (local-set-key "\C-p" 'comint-previous-input)
+  (local-set-key "\C-n" 'comint-next-input)
+  (local-set-key [up] 'comint-previous-input)
+  (local-set-key [down] 'comint-next-input))
+
+(add-hook 'inferior-python-mode-hook 'my-inferior-python-mode-hook)
+
 ;;; gitgutter
 
 (global-git-gutter-mode 1)
@@ -497,3 +590,17 @@
 
 (setf gc-cons-threshold 20000000)
 (setq inhibit-default-init t)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (evil-tabs exec-path-from-shell smart-mode-line yasnippet evil-surround key-chord jedi git-gutter flycheck fill-column-indicator evil-leader evil epl epc ess cuda-mode cython-mode clang-format smooth-scrolling autopair py-autopep8 auto-complete visual-regexp-steroids auctex))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
