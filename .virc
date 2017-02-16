@@ -35,9 +35,9 @@ set fillchars=vert:\│
 set noshowmatch
 set nocursorline
 set nocursorcolumn
-set nottyfast
 set lazyredraw
 set scrolljump=8
+set laststatus=1
 
 if version >= 701
   "set rnu "" relative line numbers
