@@ -34,6 +34,7 @@ set noshowmatch
 set nocursorline
 set nocursorcolumn
 set scrolljump=8
+set laststatus=1
 
 if version >= 701
   "set rnu "" relative line numbers
@@ -49,8 +50,6 @@ nnoremap j gj
 nnoremap k gk
 vmap Q gq
 nmap Q gqap
-map s <Leader><Leader>w
-map S <Leader><Leader>b
 map <space> /\v
 
 let fortran_free_source=1
