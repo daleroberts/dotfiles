@@ -3,7 +3,6 @@ syntax on
 
 colorscheme zellner
 
-set autochdir
 set noautoread " tells vim not to automatically reload changed files
 set modeline
 set scrolloff=6 "" keep cursor away from edge
@@ -20,7 +19,6 @@ set backupdir=/tmp "" backups here
 set nowb
 set noswapfile
 set directory=/tmp "" swap here
-set nofoldenable    " disable folding
 set wildmenu "" enhanced command completion
 set wildmode=list:longest
 set wildignore+=*.swp,*.bak,*.pyc,*.class,*.pdf,*.aux,*.toc,*.lof,*.lot,*.tdo,*.out,*.png,*.o,*.obj,.git,.svn,*.avi,*.zip,*.rar,*.doc,*.tar,*.jpg,*git*,*.gz,*.djvu,*~*,*.log,*.nav,*.snm,*.sig,*.avi,*.xls,*.pdf,*.aux,*.log,*.docx,*latexmk,*.rtf,*.ipe
@@ -35,8 +33,6 @@ set fillchars=vert:\│
 set noshowmatch
 set nocursorline
 set nocursorcolumn
-set nottyfast
-set lazyredraw
 set scrolljump=8
 
 if version >= 701
@@ -55,12 +51,17 @@ vmap Q gq
 nmap Q gqap
 map s <Leader><Leader>w
 map S <Leader><Leader>b
-nmap <CR> :write<CR>
 map <space> /\v
+
+let fortran_free_source=1
+let fortran_have_tabs=1
+let fortran_more_precise=1
+let fortran_do_enddo=1
 
 hi EasyMotionTarget ctermbg=none ctermfg=green guifg=#F6AA11 
 
 autocmd FileType r setlocal tw=0 expandtab shiftwidth=2 tabstop=8 formatoptions+=croq softtabstop=2 autoindent textwidth=79 
+autocmd FileType sh setlocal tw=0 expandtab shiftwidth=2 tabstop=8 formatoptions+=croq softtabstop=2 autoindent textwidth=79 
 autocmd FileType cpp setlocal tw=0 expandtab shiftwidth=4 tabstop=8 formatoptions+=croq softtabstop=4 autoindent textwidth=79 
 autocmd FileType python setlocal tw=0 expandtab shiftwidth=4 tabstop=8 formatoptions+=croq softtabstop=4 autoindent textwidth=79 
 autocmd FileType pyrex setlocal tw=0 expandtab shiftwidth=4 tabstop=8 formatoptions+=croq softtabstop=4 autoindent textwidth=79 
