@@ -24,12 +24,15 @@
 
 ;;; install packages if needed
 
-(setq package-archives '(("melpa" . "http://melpa.milkbox.net/packages/")
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+
+(require 'undo-tree)
+
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")))
 
 (setq package-list
-      '(auctex
-	visual-regexp-steroids
+      '(visual-regexp-steroids
 	auto-complete
         py-autopep8
 	autopair
