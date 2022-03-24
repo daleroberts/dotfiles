@@ -1,5 +1,15 @@
 ;;; init --- Custom settings
 
+(setq inhibit-default-init t)
+
+(when (window-system)
+  (tool-bar-mode 0)
+  (set-scroll-bar-mode nil)
+  (setq ns-pop-up-frames nil)
+  (set-frame-font "IBM Plex Mono 14")
+  (set-frame-position (selected-frame) 100 35)
+  (set-frame-size (selected-frame) 100 56))
+
 (setf gc-cons-threshold 100000000)
 
 (setf inhibit-startup-screen t
@@ -12,12 +22,6 @@
       require-final-newline t
       user-full-name "Dale Roberts"
       user-mail-address "dale.o.roberts@gmail.com")
-
-(when (window-system)
-  (tool-bar-mode 0)
-  (set-scroll-bar-mode nil)
-  (setq ns-pop-up-frames nil)
-  (set-frame-font "Menlo 11"))
 
 (when (not (window-system))
   (menu-bar-mode -1))
@@ -54,6 +58,7 @@
 	evil-surround
 	yasnippet
         smart-mode-line
+	latex-preview-pane
         exec-path-from-shell))
 
 (package-initialize)
@@ -64,11 +69,6 @@
 (dolist (package package-list)
   (unless (package-installed-p package)
     (package-install package)))
-
-;; keyboard
-
-(setq mac-command-modifier 'super)
-(global-set-key (kbd "s-p") 'nil)
 
 ;;; evil
 
@@ -89,7 +89,7 @@
 (setq evil-replace-state-cursor 'box)
 (setq evil-want-C-w-in-emacs-state t)
 
-;(define-key evil-normal-state-map (kbd "<s-return>") 'toggle-frame-width)
+(define-key evil-normal-state-map (kbd "<s-return>") 'toggle-frame-width)
 
 (define-key evil-normal-state-map (kbd "<SPC>") 'isearch-forward)
 (define-key evil-normal-state-map (kbd "n") 'isearch-repeat-forward)
@@ -103,6 +103,9 @@
 (define-key evil-normal-state-map ",p" 'run-python)
 (define-key evil-normal-state-map ",s" 'shell)
 (define-key evil-normal-state-map (kbd "<RET>") 'evil-write)
+(define-key evil-normal-state-map (kbd "<s-right>") 'move-end-of-line)
+(define-key evil-normal-state-map (kbd "C-e") 'move-end-of-line)
+(define-key evil-normal-state-map (kbd "<s-left>") 'evil-beginning-of-line)
 
 (define-key evil-normal-state-map (kbd "C-w <left>") 'evil-window-left)
 (define-key evil-normal-state-map (kbd "C-w <right>") 'evil-window-right)
@@ -125,7 +128,7 @@
 (define-key evil-emacs-state-map (kbd "<escape>") 'evil-normal-state)
 
 (define-key evil-visual-state-map (kbd ";") 'evil-ex)
-(define-key evil-visual-state-map (kbd "f") 'indent-region)
+; (define-key evil-visual-state-map (kbd "f") 'indent-region)
 
 (define-key evil-insert-state-map "\C-s\C-s" 'evil-buffer)
 (define-key evil-insert-state-map (kbd "<s-return>") 'toggle-frame-width)
@@ -144,6 +147,8 @@
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 (define-key isearch-mode-map [escape] 'isearch-exit)
 
+(define-key minibuffer-local-map (kbd "C-k") 'kill-line)
+
 ;;(global-set-key (kbd "RET") 'newline-and-indent)
 
 (evil-ex-define-cmd "E[dit]" 'evil-edit)
@@ -161,6 +166,20 @@
 (key-chord-define evil-insert-state-map ",," 'evil-buffer)
 (key-chord-define evil-emacs-state-map ",," 'evil-buffer)
 (key-chord-mode 1)
+
+;; keyboard
+
+(setq mac-command-modifier      'super
+      ns-command-modifier       'super
+      mac-option-modifier       'meta
+      ns-option-modifier        'meta
+      mac-right-option-modifier 'none
+      ns-right-option-modifier  'none)
+
+(global-set-key (kbd "s-s") 'evil-write)
+(global-set-key (kbd "s-q") 'evil-quit)
+(global-set-key (kbd "s-;") 'eval-last-sexp)
+(global-set-key (kbd "s-;") 'eval-last-sexp)
 
 ;;; better regex
 
@@ -365,7 +384,7 @@
 
 (defun toggle-frame-width ()
   (interactive)
-  (set-frame-size (selected-frame) (if (= (frame-width) 192) 110 192) 55))
+  (set-frame-size (selected-frame) (if (= (frame-width) 210) 100 210) 56))
 
 ;;; scale fonts
 
@@ -457,6 +476,7 @@
   (evil-leader/set-key-for-mode 'latex-mode "r" 'TeX-texify)
   (evil-leader/set-key-for-mode 'latex-mode "c" 'my-latex-chgenv)
   (setq ispell-parser 'tex)
+  (setq fill-column 99999)
   (fset 'font-latex-fontify-script nil)
   (fset 'tex-font-lock-subscript 'ignore))
 
@@ -564,6 +584,11 @@
   (exec-path-from-shell-copy-env "PS1")
   )
 
+
+;;; LaTeX
+
+;(require 'preview-dvisvgm)
+
 ;;; smart-mode-line
 
 ;(when (window-system)
@@ -589,21 +614,23 @@
 ;  (set-face-background 'git-gutter:deleted "#D64747")
 ;  (setq git-gutter:added-sign " ")
 ;  (setq git-gutter:deleted-sign " ")
-;  (setq git-gutter:modified-sign " "))
+					;  (setq git-gutter:modified-sign " "))
 
 (setf gc-cons-threshold 20000000)
-(setq inhibit-default-init t)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (evil-tabs exec-path-from-shell smart-mode-line yasnippet evil-surround key-chord jedi git-gutter flycheck fill-column-indicator evil-leader evil epl epc ess cuda-mode cython-mode clang-format smooth-scrolling autopair py-autopep8 auto-complete visual-regexp-steroids auctex))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
+;(custom-set-variables
+; ;; custom-set-variables was added by Custom.
+; ;; If you edit it by hand, you could mess it up, so be careful.
+; ;; Your init file should contain only one such instance.
+; ;; If there is more than one, they won't work right.
+; '(doc-view-resolution 300)
+; '(package-selected-packages
+;   '(evil-tabs exec-path-from-shell smart-mode-line yasnippet evil-surround key-chord jedi git-gutter flycheck fill-column-indicator evil-leader evil epl epc ess cuda-mode cython-mode clang-format smooth-scrolling autopair py-autopep8 auto-complete visual-regexp-steroids auctex))
+; '(preview-image-type 'dvisvgm))
+;
+;(custom-set-faces
+; ;; custom-set-faces was added by Custom.
+; ;; If you edit it by hand, you could mess it up, so be careful.
+; ;; Your init file should contain only one such instance.
+; ;; If there is more than one, they won't work right.
+; )

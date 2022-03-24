@@ -107,6 +107,7 @@
    `(font-latex-sectioning-4-face ((,class (:foreground ,white))))
    `(font-latex-sectioning-5-face ((,class (:foreground ,white))))
    `(font-latex-math-face ((,class (:foreground ,redpurple))))
+   `(font-latex-script-char-face ((,class (:foreground ,redpurple))))
    `(font-latex-string-face ((,class (:foreground ,white))))
    ))
 
