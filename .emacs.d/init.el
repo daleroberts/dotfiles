@@ -30,7 +30,7 @@
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
-(require 'undo-tree)
+
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")))
@@ -39,8 +39,6 @@
       '(visual-regexp-steroids
 	auto-complete
         py-autopep8
-	autopair
-	smooth-scrolling
 	clang-format
 	cython-mode
 	cuda-mode
@@ -250,10 +248,6 @@
 
  (setq ibuffer-default-sorting-mode 'alphabetic)
 
-;;; Undo tree
-
-(global-undo-tree-mode -1)
-
 ;;; unfill
 
 (defun unfill-paragraph (&optional region)
@@ -319,7 +313,7 @@
   (add-hook 'before-save-hook 'py-autopep8-before-save))
 
 (add-hook 'python-mode-hook 'fci-mode)
-(add-hook 'python-mode-hook 'autopair-mode)
+(add-hook 'python-mode-hook 'electric-pair-mode)
 (add-hook 'python-mode-hook 'my-python-mode-hook)
 (add-hook 'python-mode-hook 'my-flycheck-minor-mode)
 
@@ -618,19 +612,3 @@
 
 (setf gc-cons-threshold 20000000)
 
-;(custom-set-variables
-; ;; custom-set-variables was added by Custom.
-; ;; If you edit it by hand, you could mess it up, so be careful.
-; ;; Your init file should contain only one such instance.
-; ;; If there is more than one, they won't work right.
-; '(doc-view-resolution 300)
-; '(package-selected-packages
-;   '(evil-tabs exec-path-from-shell smart-mode-line yasnippet evil-surround key-chord jedi git-gutter flycheck fill-column-indicator evil-leader evil epl epc ess cuda-mode cython-mode clang-format smooth-scrolling autopair py-autopep8 auto-complete visual-regexp-steroids auctex))
-; '(preview-image-type 'dvisvgm))
-;
-;(custom-set-faces
-; ;; custom-set-faces was added by Custom.
-; ;; If you edit it by hand, you could mess it up, so be careful.
-; ;; Your init file should contain only one such instance.
-; ;; If there is more than one, they won't work right.
-; )
