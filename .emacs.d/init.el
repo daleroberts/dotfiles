@@ -30,8 +30,6 @@
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
-
-
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")))
 
@@ -56,7 +54,9 @@
 	evil-surround
 	yasnippet
         smart-mode-line
-	latex-preview-pane
+	auctex
+	pdf-tools
+	;;latex-preview-pane
         exec-path-from-shell))
 
 (package-initialize)
@@ -175,7 +175,9 @@
       ns-right-option-modifier  'none)
 
 (global-set-key (kbd "s-s") 'evil-write)
-(global-set-key (kbd "s-q") 'evil-quit)
+(global-set-key (kbd "s-q") 'save-buffers-kill-terminal)
+(global-set-key (kbd "s-c") 'clipboard-kill-ring-save)
+(global-set-key (kbd "s-v") 'clipboard-yank)
 (global-set-key (kbd "s-;") 'eval-last-sexp)
 (global-set-key (kbd "s-;") 'eval-last-sexp)
 
@@ -453,22 +455,23 @@
 (defun TeX-texify ()
   (interactive)
   (save-buffer)
-  (TeX-command-menu "makepdf"))
+  (TeX-command-menu "LaTeX"))
 
 (defun my-latex-mode-hook ()
-  (undo-tree-mode 0)
+  ;(undo-tree-mode 0)
   (auto-save-mode 0)
   (flyspell-mode 1)
   (flycheck-mode 0)
   (word-count-mode 1)
   (setq flycheck-chktexrc "~/.chktexrc")
-  (setq TeX-command-default "makepdf")
+  ;;(setq TeX-command-default "makepdf")
   (visual-line-mode 1)
   (auto-revert-mode 1)
   (yas-minor-mode-on)
   (yas-reload-all)
-  (evil-leader/set-key-for-mode 'latex-mode "r" 'TeX-texify)
-  (evil-leader/set-key-for-mode 'latex-mode "c" 'my-latex-chgenv)
+  (local-set-key (kbd "s-s") 'TeX-texify)
+  (local-set-key (kbd "s-p") 'TeX-view)
+  (local-set-key (kbd "s-c") 'my-latex-chgenv)
   (setq ispell-parser 'tex)
   (setq fill-column 99999)
   (fset 'font-latex-fontify-script nil)
@@ -482,10 +485,17 @@
 (setq font-latex-deactivated-keyword-classes
       '("italic-command" "bold-command" "italic-declaration" "bold-declaration"))
 
-(eval-after-load "tex"
-  '(add-to-list 'TeX-command-list
-              '("makepdf" "makepdf2 %n %b" TeX-run-TeX nil t
-                :help "Run makepdf on file")))
+(setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+      TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view))
+      TeX-source-correlate-start-server t)
+
+(add-hook 'TeX-after-compilation-finished-functions
+          #'TeX-revert-document-buffer)
+
+;;(eval-after-load "tex"
+;;  '(add-to-list 'TeX-command-list
+;;              '("makepdf" "makepdf2 %n %b" TeX-run-TeX nil t
+;;                :help "Run makepdf on file")))
 
 ;; shell mode
 
@@ -578,6 +588,26 @@
   (exec-path-from-shell-copy-env "PS1")
   )
 
+;;; pdf-tools
+
+(pdf-tools-install)
+
+(setq-default pdf-view-display-size 'fit-page)
+
+(setq pdf-view-use-scaling t
+      pdf-view-use-imagemagick nil
+      pdf-view-display-size 'fit-width
+      pdf-view-midnight-colors '("#dddddd" . "#4e2f4c"))
+
+(evil-set-initial-state 'pdf-view-mode 'emacs)
+
+(defun my-pdf-view-mode-hook ()
+  (set (make-local-variable 'evil-emacs-state-cursor) (list nil))
+  (setq pdf-view-display-size 'fit-width))
+
+(add-hook 'pdf-view-mode-hook 'my-pdf-view-mode-hook)
+(add-hook 'pdf-view-midnight-minor-mode 'my-pdf-view-mode-hook)
+(add-hook 'pdf-tools-enabled-hook 'pdf-view-midnight-minor-mode)
 
 ;;; LaTeX
 
@@ -594,8 +624,8 @@
 ;  (sml/setup))
 
 ;;; server
-;;(load "server")
-;;(unless (server-running-p) (server-start))
+(load "server")
+(unless (server-running-p) (server-start))
 
 ;;; colors
 
@@ -612,3 +642,21 @@
 
 (setf gc-cons-threshold 20000000)
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(TeX-source-correlate-mode t)
+ '(TeX-view-program-selection
+   '((output-dvi "open")
+     (output-pdf "PDF Tools")
+     (output-html "open")))
+ '(package-selected-packages
+   '(auctex pdf-tools yasnippet visual-regexp-steroids smart-mode-line py-autopep8 latex-preview-pane key-chord jedi git-gutter flycheck fill-column-indicator exec-path-from-shell evil-tabs evil-surround evil-leader ess cython-mode cuda-mode clang-format)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
