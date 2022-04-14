@@ -615,14 +615,15 @@
 
 ;;; pdf-tools
 
-(pdf-tools-install)
-
 (setq-default pdf-view-display-size 'fit-page)
 
 (setq pdf-view-use-scaling t
       pdf-view-use-imagemagick nil
       pdf-view-display-size 'fit-width
+      pdf-view-use-unicode-ligther nil
       pdf-view-midnight-colors '("#dddddd" . "#4e2f4c"))
+
+(pdf-tools-install)
 
 (evil-set-initial-state 'pdf-view-mode 'emacs)
 
