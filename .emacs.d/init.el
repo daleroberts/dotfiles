@@ -596,7 +596,7 @@
          (mode (with-selected-window wind major-mode)))
     (if (eq mode 'pdf-view-mode)
         (with-selected-window wind
-      (pdf-view-next-line-or-next-page 5))
+      (pdf-view-next-page))
       (scroll-other-window 5))))
 
 (defun my-scroll-other-window-down ()
@@ -606,7 +606,7 @@
     (if (eq mode 'pdf-view-mode)
     (with-selected-window wind
       (progn
-        (pdf-view-previous-line-or-previous-page 5)
+        (pdf-view-previous-page)
         (other-window 1)))
       (scroll-other-window-down 5))))
 
