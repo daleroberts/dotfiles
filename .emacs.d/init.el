@@ -588,6 +588,31 @@
   (exec-path-from-shell-copy-env "PS1")
   )
 
+;;; other window scroll
+
+(defun my-scroll-other-window ()
+  (interactive)
+  (let* ((wind (other-window-for-scrolling))
+         (mode (with-selected-window wind major-mode)))
+    (if (eq mode 'pdf-view-mode)
+        (with-selected-window wind
+      (pdf-view-next-line-or-next-page 5))
+      (scroll-other-window 5))))
+
+(defun my-scroll-other-window-down ()
+  (interactive)
+  (let* ((wind (other-window-for-scrolling))
+         (mode (with-selected-window wind major-mode)))
+    (if (eq mode 'pdf-view-mode)
+    (with-selected-window wind
+      (progn
+        (pdf-view-previous-line-or-previous-page 5)
+        (other-window 1)))
+      (scroll-other-window-down 5))))
+
+(global-set-key (kbd "s-<next>") 'my-scroll-other-window)
+(global-set-key (kbd "s-<prior>") 'my-scroll-other-window-down)
+
 ;;; pdf-tools
 
 (pdf-tools-install)
