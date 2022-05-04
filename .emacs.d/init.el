@@ -88,7 +88,7 @@
 (setq evil-replace-state-cursor 'box)
 (setq evil-want-C-w-in-emacs-state t)
 
-(define-key evil-normal-state-map (kbd "<s-return>") 'toggle-frame-width)
+(define-key evil-normal-state-map (kbd "<s-return>") 'toggle-frame-sizes)
 
 (define-key evil-normal-state-map (kbd "<SPC>") 'isearch-forward)
 (define-key evil-normal-state-map (kbd "n") 'isearch-repeat-forward)
@@ -130,7 +130,7 @@
 ; (define-key evil-visual-state-map (kbd "f") 'indent-region)
 
 (define-key evil-insert-state-map "\C-s\C-s" 'evil-buffer)
-(define-key evil-insert-state-map (kbd "<s-return>") 'toggle-frame-width)
+(define-key evil-insert-state-map (kbd "<s-return>") 'toggle-frame-sizes)
 (define-key evil-insert-state-map (kbd "<s-right>") 'move-end-of-line)
 (define-key evil-insert-state-map (kbd "C-e") 'move-end-of-line)
 (define-key evil-insert-state-map (kbd "<s-left>") 'evil-beginning-of-line)
@@ -377,11 +377,21 @@
 (setq current-language-environment "UTF-8")
 (prefer-coding-system 'utf-8)
 
-;;; frame width
+;;; frame dimensions
 
 (defun toggle-frame-width ()
   (interactive)
-  (set-frame-size (selected-frame) (if (= (frame-width) 210) 100 210) 56))
+  (set-frame-size (selected-frame) (if (= (frame-width) 210) 100 210) 100))
+
+(defun toggle-frame-sizes ()
+  (interactive)
+  (let* ((dim-cycle (list '(100 56) '(100 76) '(200 76) '(200 56)))
+	 (dim-tail (member (list (frame-width) (frame-height)) dim-cycle)))
+    (if dim-tail
+	(apply #'set-frame-size (selected-frame)
+	       (or (car (cdr dim-tail))
+		   (car dim-cycle)))
+      (set-frame-size (selected-frame) 100 56))))
 
 ;;; scale fonts
 
@@ -687,7 +697,7 @@
      (output-pdf "PDF Tools")
      (output-html "open")))
  '(package-selected-packages
-   '(auctex pdf-tools yasnippet visual-regexp-steroids smart-mode-line py-autopep8 latex-preview-pane key-chord jedi git-gutter flycheck fill-column-indicator exec-path-from-shell evil-tabs evil-surround evil-leader ess cython-mode cuda-mode clang-format)))
+   '(frame-cmds auctex pdf-tools yasnippet visual-regexp-steroids smart-mode-line py-autopep8 latex-preview-pane key-chord jedi git-gutter flycheck fill-column-indicator exec-path-from-shell evil-tabs evil-surround evil-leader ess cython-mode cuda-mode clang-format)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
