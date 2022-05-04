@@ -16,6 +16,7 @@
       inhibit-startup-message t
       inhibit-startup-echo-area-message t
       visible-bell nil
+      ring-bell-function 'ignore
       column-number-mode nil
       size-indication-mode nil
       make-backup-files nil
@@ -452,6 +453,12 @@
        (or (car (cdr env-tail))
 	   (car env-cycle))))))
 
+(defun my-latex-toggle-star ()
+  (interactive)
+  (if (string-match "\*$" (LaTeX-current-environment))
+      (LaTeX-modify-environment (substring (LaTeX-current-environment) 0 -1))
+    (LaTeX-modify-environment (concat (LaTeX-current-environment) "*"))))
+
 (defun TeX-texify ()
   (interactive)
   (save-buffer)
@@ -462,7 +469,7 @@
   (auto-save-mode 0)
   (flyspell-mode 1)
   (flycheck-mode 0)
-  (word-count-mode 1)
+  (word-count-mode 0)
   (setq flycheck-chktexrc "~/.chktexrc")
   ;;(setq TeX-command-default "makepdf")
   (visual-line-mode 1)
@@ -472,6 +479,7 @@
   (local-set-key (kbd "s-s") 'TeX-texify)
   (local-set-key (kbd "s-p") 'TeX-view)
   (local-set-key (kbd "s-c") 'my-latex-chgenv)
+  (local-set-key (kbd "s-x") 'my-latex-toggle-star)
   (setq ispell-parser 'tex)
   (setq fill-column 99999)
   (fset 'font-latex-fontify-script nil)
