@@ -381,17 +381,19 @@
 
 (defun toggle-frame-width ()
   (interactive)
-  (set-frame-size (selected-frame) (if (= (frame-width) 210) 100 210) 100))
+  (set-frame-size (selected-frame) (if (= (frame-width) 210) 100 210) 100)
+  )
 
 (defun toggle-frame-sizes ()
   (interactive)
-  (let* ((dim-cycle (list '(100 56) '(100 76) '(200 76) '(200 56)))
+  (let* ((dim-cycle (list '(100 56) '(200 56) '(100 76) '(200 76)))
 	 (dim-tail (member (list (frame-width) (frame-height)) dim-cycle)))
     (if dim-tail
 	(apply #'set-frame-size (selected-frame)
 	       (or (car (cdr dim-tail))
 		   (car dim-cycle)))
-      (set-frame-size (selected-frame) 100 56))))
+      (set-frame-size (selected-frame) (if (= (frame-width) 200) 100 200) 100))
+    (message "frame-size: %s x %s" (frame-width) (frame-height))))
 
 ;;; scale fonts
 
@@ -646,6 +648,7 @@
 (evil-set-initial-state 'pdf-view-mode 'emacs)
 
 (defun my-pdf-view-mode-hook ()
+  (turn-off-evil-mode)
   (set (make-local-variable 'evil-emacs-state-cursor) (list nil))
   (setq pdf-view-display-size 'fit-width))
 
