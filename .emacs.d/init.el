@@ -77,7 +77,7 @@
 (global-evil-leader-mode)
 (evil-leader/set-leader ",")
 
-(evil-set-initial-state 'help-mode 'normal)
+(evil-set-initial-state 'help-mode 'emacs)
 (evil-set-initial-state 'shell-mode 'emacs)
 (evil-set-initial-state 'inferior-python-mode 'emacs)
 
@@ -121,10 +121,16 @@
 (define-key evil-emacs-state-map (kbd "C-w <up>") 'evil-window-up)
 (define-key evil-emacs-state-map (kbd "C-w <down>") 'evil-window-down)
 (define-key evil-emacs-state-map (kbd "C-w C-w") 'evil-window-next)
+(define-key evil-emacs-state-map (kbd "<s-left>") 'evil-window-left)
+(define-key evil-emacs-state-map (kbd "<s-right>") 'evil-window-right)
+(define-key evil-emacs-state-map (kbd "<s-up>") 'evil-window-up)
+(define-key evil-emacs-state-map (kbd "<s-down>") 'evil-window-down)
+
 (define-key evil-emacs-state-map (kbd "C-w v") 'evil-window-vsplit)
 (define-key evil-emacs-state-map (kbd "C-w s") 'evil-window-split)
 (define-key evil-emacs-state-map (kbd "C-w c") 'evil-window-delete)
-(define-key evil-emacs-state-map (kbd "<escape>") 'evil-normal-state)
+
+(define-key evil-emacs-state-map (kbd "<escape>") 'evil-emacs-state)
 
 (define-key evil-visual-state-map (kbd ";") 'evil-ex)
 ; (define-key evil-visual-state-map (kbd "f") 'indent-region)
@@ -648,13 +654,24 @@
 (evil-set-initial-state 'pdf-view-mode 'emacs)
 
 (defun my-pdf-view-mode-hook ()
-  (turn-off-evil-mode)
+  ;(turn-off-evil-mode)
   (set (make-local-variable 'evil-emacs-state-cursor) (list nil))
-  (setq pdf-view-display-size 'fit-width))
+  (setq pdf-view-display-size 'fit-width)
+  (local-set-key "j" 'pdf-view-next-page-command)
+  (local-set-key "k" 'pdf-view-previous-page-command)
+  (local-set-key "g" 'beginning-of-buffer)
+  (local-set-key "G" 'end-of-buffer))
 
 (add-hook 'pdf-view-mode-hook 'my-pdf-view-mode-hook)
-(add-hook 'pdf-view-midnight-minor-mode 'my-pdf-view-mode-hook)
+;(add-hook 'pdf-view-midnight-minor-mode 'my-pdf-view-mode-hook)
 (add-hook 'pdf-tools-enabled-hook 'pdf-view-midnight-minor-mode)
+
+;; help-mode
+
+(defun my-help-mode-hook ()
+  (local-set-key "q" 'quit-window))
+
+(add-hook 'help-mode-hook 'my-help-mode-hook)
 
 ;;; LaTeX
 
