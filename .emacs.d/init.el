@@ -188,6 +188,10 @@
 (global-set-key (kbd "s-;") 'eval-last-sexp)
 (global-set-key (kbd "s-;") 'eval-last-sexp)
 
+;;; processes
+
+(setq confirm-kill-processes nil)
+
 ;;; better regex
 
 (require 'visual-regexp-steroids)
