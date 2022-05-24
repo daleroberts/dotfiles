@@ -97,6 +97,7 @@
 (define-key evil-normal-state-map (kbd ";") 'evil-ex)
 (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
 (define-key evil-normal-state-map ",b" 'ibuffer)
+(define-key evil-normal-state-map ",k" 'kill-other-buffers)
 (define-key evil-normal-state-map ",," 'evil-buffer)
 (define-key evil-normal-state-map "\C-s\C-s" 'evil-buffer)
 (define-key evil-normal-state-map ",p" 'run-python)
@@ -263,7 +264,14 @@
               filename-and-process)
         (mark " " (name 16 -1) " " filename)))
 
- (setq ibuffer-default-sorting-mode 'alphabetic)
+(setq ibuffer-default-sorting-mode 'alphabetic)
+
+;;; buffers
+
+(defun kill-other-buffers ()
+  "Kill all other buffers."
+  (interactive)
+  (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
 
 ;;; unfill
 
