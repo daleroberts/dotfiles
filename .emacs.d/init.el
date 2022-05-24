@@ -35,7 +35,8 @@
                          ("gnu" . "http://elpa.gnu.org/packages/")))
 
 (setq package-list
-      '(visual-regexp-steroids
+      '(visual-regexp
+	visual-regexp-steroids
 	auto-complete
         py-autopep8
 	clang-format
@@ -57,7 +58,6 @@
         smart-mode-line
 	auctex
 	pdf-tools
-	;;latex-preview-pane
         exec-path-from-shell))
 
 (package-initialize)
@@ -195,6 +195,10 @@
 ;;; better regex
 
 (require 'visual-regexp-steroids)
+
+(setq vr/command-python (replace-regexp-in-string "^python "
+						  "python3 "
+						  vr--command-python-default))
 
 (define-key evil-normal-state-map (kbd "<SPC>") 'vr/isearch-forward)
 (define-key evil-normal-state-map (kbd "R") 'vr/replace)
