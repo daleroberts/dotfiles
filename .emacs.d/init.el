@@ -273,6 +273,11 @@
   (interactive)
   (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
 
+;;; text edit functions
+
+(require 'random-phrase)
+(define-key evil-insert-state-map (kbd "C-r") 'random-word-pair-insert)
+
 ;;; unfill
 
 (defun unfill-paragraph (&optional region)
@@ -283,7 +288,7 @@
 
 ;;; python
 
-(setq py-python-command "/usr/local/bin/python3")
+(setq py-python-command "python3")
 (setq python-shell-interpreter "ipython3")
 (setq python-shell-interpreter-args "--pprint -c \"import numpy as np; import pandas as pd\" -i")
 
@@ -312,15 +317,15 @@
   (require 'python)
 
   (setq flycheck-python-pylint-executable "pylint")
-  (setq jedi:environment-root "jedi")
+  ;(setq jedi:environment-root "jedi")
   ;(setq elpy-rpc-python-command "python3")
 
-  (jedi:setup)
-  (setq jedi:complete-on-dot t)
+  ;(jedi:setup)
+  ;(setq jedi:complete-on-dot t)
 
-  (define-key evil-normal-state-map (kbd "s") 'jedi:goto-definition)
-  (define-key evil-normal-state-map (kbd "S") 'jedi:show-doc)
-  (define-key evil-normal-state-map (kbd "<s-return>") 'my-python-send-region)
+  ;(define-key evil-normal-state-map (kbd "s") 'jedi:goto-definition)
+  ;(define-key evil-normal-state-map (kbd "S") 'jedi:show-doc)
+  ;(define-key evil-normal-state-map (kbd "<s-return>") 'my-python-send-region)
 
   (evil-leader/set-key-for-mode 'python-mode "f" 'py-autopep8)
   (evil-leader/set-key-for-mode 'python-mode "e" 'python-shell-send-region)
@@ -467,7 +472,6 @@
 
 ;;; word count
 
-(add-to-list 'load-path "~/.emacs.d/lisp")
 (autoload 'word-count-mode "word-count"
            "Minor mode to count words." t nil)
 
@@ -720,7 +724,19 @@
 ;  (setq git-gutter:deleted-sign " ")
 					;  (setq git-gutter:modified-sign " "))
 
+
+
 (setf gc-cons-threshold 20000000)
+
+;;; show recently edited files on startup
+
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-menu-items 25)
+
+(recentf-open-files)
+
+;;; Other things set in GUI
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
