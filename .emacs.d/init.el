@@ -734,7 +734,7 @@
 (recentf-mode 1)
 (setq recentf-max-menu-items 25)
 
-(recentf-open-files)
+(ignore-errors (recentf-open-files))
 
 ;;; Other things set in GUI
 
