@@ -493,7 +493,7 @@
 
 (defun my-latex-toggle-star ()
   (interactive)
-  (if (string-match "\*$" (LaTeX-current-environment))
+  (if (string-match "\\\\*$" (LaTeX-current-environment))
       (LaTeX-modify-environment (substring (LaTeX-current-environment) 0 -1))
     (LaTeX-modify-environment (concat (LaTeX-current-environment) "*"))))
 
@@ -509,7 +509,6 @@
   (flycheck-mode 0)
   (word-count-mode 0)
   (setq flycheck-chktexrc "~/.chktexrc")
-  ;;(setq TeX-command-default "makepdf")
   (visual-line-mode 1)
   (auto-revert-mode 1)
   (yas-minor-mode-on)
@@ -538,10 +537,18 @@
 (add-hook 'TeX-after-compilation-finished-functions
           #'TeX-revert-document-buffer)
 
-;;(eval-after-load "tex"
-;;  '(add-to-list 'TeX-command-list
-;;              '("makepdf" "makepdf2 %n %b" TeX-run-TeX nil t
-;;                :help "Run makepdf on file")))
+(font-lock-add-keywords 'latex-mode
+			'(("\\\\questionname" . 'font-latex-sectioning-5-face)
+			  ("\\\\question" . 'font-latex-sectioning-5-face)
+			  ("\\\\part" . 'font-lock-keyword-face)
+			  ("\\<\\(HERE\\)" 1 font-lock-warning-face prepend)
+			  ("\\<\\(FIXME\\)" 1 font-lock-warning-face prepend)
+			  ("\\<\\(TODO\\)" 1 font-lock-warning-face prepend)))
+
+(font-lock-add-keywords 'latex-math-mode
+			'(("\\<\\(FIXME\\)" 1 font-lock-warning-face prepend)
+			  ("\\<\\(HERE\\)" 1 font-lock-warning-face prepend)
+			  ("\\<\\(TODO\\)" 1 font-lock-warning-face prepend)))
 
 ;; shell mode
 
@@ -733,6 +740,9 @@
 (require 'recentf)
 (recentf-mode 1)
 (setq recentf-max-menu-items 25)
+(setq recentf-exclude '("\\.pdf$"
+                        "\\.gz$"))
+(recentf-cleanup)
 
 (ignore-errors (recentf-open-files))
 
