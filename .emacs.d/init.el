@@ -7,7 +7,7 @@
   (set-scroll-bar-mode nil)
   (setq ns-pop-up-frames nil)
   (set-frame-font "IBM Plex Mono 14")
-  (set-frame-position (selected-frame) 100 35)
+  (set-frame-position (selected-frame) 38 20)
   (set-frame-size (selected-frame) 100 56))
 
 (setf gc-cons-threshold 100000000)
@@ -69,6 +69,16 @@
   (unless (package-installed-p package)
     (package-install package)))
 
+;;; colors
+
+(add-to-list 'custom-theme-load-path "~/.emacs.d")
+
+(require 'color) ; for color manipulations
+
+(if window-system (load-theme 'protonopia t))
+;(if window-system (load-theme 'green t))
+;(if window-system (load-theme 'dichromacy t))
+
 ;;; evil
 
 (require 'evil)
@@ -106,6 +116,7 @@
 (define-key evil-normal-state-map (kbd "<s-right>") 'move-end-of-line)
 (define-key evil-normal-state-map (kbd "C-e") 'move-end-of-line)
 (define-key evil-normal-state-map (kbd "<s-left>") 'evil-beginning-of-line)
+(define-key evil-normal-state-map (kbd "s-b") 'recentf-open-files)
 
 (define-key evil-normal-state-map (kbd "C-w <left>") 'evil-window-left)
 (define-key evil-normal-state-map (kbd "C-w <right>") 'evil-window-right)
@@ -413,13 +424,13 @@
 
 (defun toggle-frame-sizes ()
   (interactive)
-  (let* ((dim-cycle (list '(100 56) '(200 56) '(100 76) '(200 76)))
+  (let* ((dim-cycle (list '(100 56) '(160 56) '(100 76) '(160 76)))
 	 (dim-tail (member (list (frame-width) (frame-height)) dim-cycle)))
     (if dim-tail
 	(apply #'set-frame-size (selected-frame)
 	       (or (car (cdr dim-tail))
 		   (car dim-cycle)))
-      (set-frame-size (selected-frame) (if (= (frame-width) 200) 100 200) 100))
+      (set-frame-size (selected-frame) (if (/= (frame-width) 160) 100 160) 56))
     (message "frame-size: %s x %s" (frame-width) (frame-height))))
 
 ;;; scale fonts
@@ -434,8 +445,7 @@
          (new-point-height (/ new-height 10)))
     (dolist (f (frame-list))
       (with-selected-frame f
-        (set-frame-font (font-name-replace-size (face-font 'default)
-						new-point-height) t)))
+        (set-frame-font (font-name-replace-size (face-font 'default) new-point-height) t)))
     (set-face-attribute 'default nil :height new-height)
     (message "default font size is now %d" new-point-height)))
 
@@ -445,6 +455,7 @@
 
 (defun decrease-default-font-height ()
   (interactive)
+  (set-frame-size (selected-frame) (- (frame-width) 10) (frame-height))
   (increment-default-font-height -10))
 
 (global-set-key (kbd "s-=") 'increase-default-font-height)
@@ -491,11 +502,20 @@
        (or (car (cdr env-tail))
 	   (car env-cycle))))))
 
+(defun my-latex-current-env ()
+  (interactive)
+  (message "env: %s" (LaTeX-current-environment)))
+
 (defun my-latex-toggle-star ()
   (interactive)
   (if (string-match "\\\\*$" (LaTeX-current-environment))
       (LaTeX-modify-environment (substring (LaTeX-current-environment) 0 -1))
     (LaTeX-modify-environment (concat (LaTeX-current-environment) "*"))))
+
+(defun my-latex-view ()
+  (interactive)
+  (TeX-view)
+  (pdf-view-enlarge 1.25))
 
 (defun TeX-texify ()
   (interactive)
@@ -514,7 +534,7 @@
   (yas-minor-mode-on)
   (yas-reload-all)
   (local-set-key (kbd "s-s") 'TeX-texify)
-  (local-set-key (kbd "s-p") 'TeX-view)
+  (local-set-key (kbd "s-p") 'my-latex-view)
   (local-set-key (kbd "s-c") 'my-latex-chgenv)
   (local-set-key (kbd "s-x") 'my-latex-toggle-star)
   (setq ispell-parser 'tex)
@@ -538,8 +558,8 @@
           #'TeX-revert-document-buffer)
 
 (font-lock-add-keywords 'latex-mode
-			'(("\\\\questionname" . 'font-latex-sectioning-5-face)
-			  ("\\\\question" . 'font-latex-sectioning-5-face)
+			'(("\\\\questionname{\\([^}]+\\)}" . 'font-latex-sectioning-4-face)
+			  ("\\\\question" . 'font-latex-sectioning-4-face)
 			  ("\\\\part" . 'font-lock-keyword-face)
 			  ("\\<\\(HERE\\)" 1 font-lock-warning-face prepend)
 			  ("\\<\\(FIXME\\)" 1 font-lock-warning-face prepend)
@@ -622,12 +642,6 @@
 
 (global-git-gutter-mode 1)
 
-;;; color theme
-
-(add-to-list 'custom-theme-load-path "~/.emacs.d")
-;(if window-system (load-theme 'dr t))
-(if window-system (load-theme 'protonopia t))
-
 ;;; yasnippet
 
 (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
@@ -674,7 +688,7 @@
       pdf-view-use-imagemagick nil
       pdf-view-display-size 'fit-width
       pdf-view-use-unicode-ligther nil
-      pdf-view-midnight-colors '("#dddddd" . "#4e2f4c"))
+      pdf-view-midnight-colors (cons (color-saturate-name (face-attribute 'default :foreground) 20) (face-attribute 'default :background)))
 
 (pdf-tools-install)
 
@@ -758,8 +772,12 @@
    '((output-dvi "open")
      (output-pdf "PDF Tools")
      (output-html "open")))
+ '(custom-safe-themes
+   '("7e6f0ba14043b81cbeb5330308fddea0974238340fd30d4f0aae4136956402a9" "aa82485f9fb3815da6418cfaa60e92d5e582eed6fd7279a710b84a4060f6fe4b" "db5b033910e2223a26b5bc761a63fb49408249b4b247140ea3f8bab091f680a0" "ddc0f6f0bb164d2a4e8316410fcc68e72537be15bfa8d1b4e1dc179f1a5ac2b9" "dafba3824558c2d84c0cc1a6ab7785bca5cfdca1a38f5e841a07da31d84dc956" "36ca8f60565af20ef4f30783aa16a26d96c02df7b4e54e9900a5138fb33808da" "82fee59742833e4211e49018b5957b026f943c6dc2b7fce9271b1b1de9a612a4" "fdf7d52913c5e4866b7688760f1d7bb47900b1859e3fa883d95cb94ac1ce99c2" "d6f6beed6c208edb03c2764b5f351c0a3b30811a6bd80a2a49880db48cc6e0af" "b5e5b27cc03af8ba51dec94b2713b118789442156dccda6dbaee2a550d047c8e" "ed310eb937ea66995940606b62fd8a0108d20bc14ef6fa54067bb00c08aa03e8" "aa5e4c582febc536f3800962cf147ed4219ebd62dde85b9e5a03e3995ca7ac70" "769998d99cd5cc9febe776010086bf24ecf7876de9a4da3ea5f8969dbed16311" "73d34b8b64d01f4126a745be5012a9c17a7f725b959b23149c51807f53d9874a" "56d862a40c1df73874f4318b5538ead64d807d03d66ba282982f362ccc34286d" "9fedb950e2258bc0045fd10ca08f76eb69a4360334387adde83fbfb0814b61dc" "468df9b8d053e7b48bec277b2183a9b6e3a756b3a043e91348840f90d9720185" "87b0d84a241cf8293b93b9ff10c8904a7b6b1f7f6f489c53e4837f138f5ad507" "76b33fde1e6bf885a7f63091d6949fd2ee558755c4f601b55f55592ee3fe1ca2" "8ec73354d50ea0016e3c24f11917ed706485ada62d3f8e7dd50d2242c90c6af1" "cc0f750a9e31a26211508ba7468a5697baf9e02984e2a2823a1d8b362504e23c" "a328eb54cca3534e96615175918f4bb6fcf45928b80d358b45d35137613498fa" "e9c244ecd4c0a1c3900716f77ffcbed76ad92558538ea799e56960a69ca11223" "7abc44a48e5715307cb5c862ba4649202c57d066d3785dfaeda893b2a3bfc8fb" "8882bef928e4ea9b77d9320d8e417e6351302d62124c29abffea7f91f8d1b564" "06ab23e2dfefda6cc52aa837a47965e958c78dd2709d9b3efee7e5037fe366d2" "734e7cce72a723362f7a5240b376666d66cc7c97ee4bbf3be8d9826b0e8fd6c7" "cca2d55c425b594445f0e5596852ed2ecc3ed26a61fc2825c826a1eaed12d206" "a8bb1a042d2a569403717662a13e3e9113b126f750af0673ec33952a4407681c" "faa4bc25eef35702931c67c6fc81f95268f63b426927ad688e7c83ed33327b45" "d8d2f0e116b3f0ba19dd12f16b10d22561af5faecf7e06e097f396002881c022" "a119f78d733e63ceb94279affa6060f0bc2f38f1c46aee34f4fa8a7c26d2249d" "0170aaaaa5560b4098447c02131db97b648e1e7af5d7e53e38468b685477534f" "557d250d91484fbe5412527253a351450acc9e8480f2c0b62289365bc43549ca" "48170dc7eff490e9c5c7889bd488814f0e1c89bc4a40d203934a41490f84c6c6" "a5718bc2946387b08866843ceef5a7e2623ac8dbd3f963f540cd18b38ca27280" "1fc0e7ded5e6919e71f079063e8616d126fc59aa8320665cdb9d62e444fa1611" "8c684bdb6f2c11fe776eb672fcb2e961729329fc68c629f5c21f2d24df89e520" "37de0975dd942e1d4be458e441fb2f6ac888ded08dd94d0f495ea8330074a878" "76b9d2dd69c2f0c2b97f164f1e6a1c4e8eb409d56ab69b584580f50e0fc98443" "d79999bc4c8817fbd81cbd077becde94b5084a1acf44de519042616d6a6a32c0" "441a7ece325b3e5c6dc892c58d208483ce7aa8650aa58a93e194b95d29cfba98" "6c6f4520a762def4f61ae19bf67af51aee15d43bd4dbb79a716568d0886b33bb" "993f84f6f2692e41092e4245c36cfeb5666fc0d1b3367bd1c676509cd527c021" "afbf176a83b98b7ee9314493614f8fd7b9e21fcf7fab662562276e4a0da4c80a" "a7cb511a26f214469304c9c381de4055f735fdfb12d46f34569c4621e85cea20" "2f202fa6bf705d5c10f042a187d757357c7260f5e1048ae26f37a70511838449" "633a9ab48ad5c4cbf763fcfc2fd75ae0f0d64e0573bf6d7be9e7f8f122df4575" "6293980ea5de3e90ac08bd8a4edc0f6f04b886ca290cbde3bf45244705de1a82" "32e15ed1f2a80ba6f77842c2eaa95ffd56b4b11d8fc262a0a2edeb0d16455a78" "410589c8bffe45426c397040f766b9b64658edd910c4e6ade6f3240dd413b9c3" "370a39d19007eeaeb1911d64353113abc93d88dce597f95c6fa3d29760286ddb" "afef30296251bd4f714835228cfa5b87a5075b998e2f7c980b902ed4e52a4391" "6278073970c0e1808e02d4b6ec68f02caaee09f8d9b626a595808ae64ed428c7" "a0d1470c14c0bf2aa5352d0b1a81b07aaedc3cd48aa3d67f0a49febd2fa9362e" "a047dd81c71a9efc47d553f69296f6332bfb029de32bb19fd4cc75304c292ca9" "6f9fc46380ff9f00da8c10b47bfb01341fe4d8a0e68dffffb0c0ba1d2cd887d8" "419403737ece35f1bcc7befbdf80b3fd64ac7fc1e92d1985b83602b0d2b22bdd" "63af96eac920d9d8915ebcbca5512b81c35e616c02533f3bd4e64975364c5a7d" "b14dc82499d8425d0fdda8062b956fd676838d2bedd1a73f64f422c29483e66f" "c473efc5ac6ea783438c4754d0adaec8e31c71c5dddb47e4223a24a995606671" "2b87b887a537adc36ae38926faaba1beadb38f0d86346e214c5a03fccdcaa93e" "b6e595379c6394fb8f36c4a27c3c3a70ab52a41d20ba0df4cd439ba212473952" "6016bc6974f675f5d2f1998e6a3ec3402f0bf9e2fb7cf27b94bb255798528643" "9e630a74c3cf89598ded7f97c16ad2304ee1fc63868701191bc7e463be989147" "2bcadbfefd3061e6acd447ee62670b3834fb2f7f9cb36ecf1d3061cb75781162" "9f3c0f73a108b2fb169dd487c57b524153e40946b85a4612d30320b2971b6d22" "b754734dfba35332f97f523d973ec6785a13897c5592f03864f8082c729e6b91" "2fd6ea7cd0ce3d2c99679adc36a65072f86a6ade8ae115b8ada9e6b3c61e127f" "81ebc5f3c7a3739d21af943a82c23af822a9b41e18261f2a9bfa564041722165" default))
  '(package-selected-packages
-   '(frame-cmds auctex pdf-tools yasnippet visual-regexp-steroids smart-mode-line py-autopep8 latex-preview-pane key-chord jedi git-gutter flycheck fill-column-indicator exec-path-from-shell evil-tabs evil-surround evil-leader ess cython-mode cuda-mode clang-format)))
+   '(frame-cmds auctex pdf-tools yasnippet visual-regexp-steroids smart-mode-line py-autopep8 latex-preview-pane key-chord jedi git-gutter flycheck fill-column-indicator exec-path-from-shell evil-tabs evil-surround evil-leader ess cython-mode cuda-mode clang-format))
+ '(warning-suppress-log-types '((comp) (comp)))
+ '(warning-suppress-types '((comp) (comp))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

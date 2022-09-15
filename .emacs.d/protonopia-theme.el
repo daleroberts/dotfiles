@@ -1,4 +1,4 @@
-;;; dr-theme.el --- Custom theme for faces
+;;; protonopia-theme.el --- Custom theme for faces
 ;;; Commentary:
 ;;; Code:
 
@@ -106,7 +106,7 @@
    `(font-latex-sectioning-2-face ((,class (:foreground ,white))))
    `(font-latex-sectioning-3-face ((,class (:foreground ,white))))
    `(font-latex-sectioning-4-face ((,class (:foreground ,white))))
-   `(font-latex-sectioning-5-face ((,class (:foreground ,white :background ,lightpurple))))
+   `(font-latex-sectioning-5-face ((,class (:foreground ,white :background ,vermillion))))
    `(font-latex-math-face ((,class (:foreground ,redpurple))))
    `(font-latex-script-char-face ((,class (:foreground ,redpurple))))
    `(font-latex-string-face ((,class (:foreground ,white))))
@@ -114,4 +114,4 @@
 
 (provide-theme 'protonopia)
 
-;;; dr-theme.el ends here
+;;; protonopia-theme.el ends here
