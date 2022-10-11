@@ -195,6 +195,7 @@
 
 (global-set-key (kbd "s-s") 'evil-write)
 (global-set-key (kbd "s-q") 'save-buffers-kill-terminal)
+(global-set-key (kbd "s-w") 'close-all-buffers)
 (global-set-key (kbd "s-c") 'clipboard-kill-ring-save)
 (global-set-key (kbd "s-v") 'clipboard-yank)
 (global-set-key (kbd "s-;") 'eval-last-sexp)
@@ -388,6 +389,10 @@
     (abort-recursive-edit)))
 
 ;;; buffers
+
+(defun close-all-buffers ()
+(interactive)
+  (mapc 'kill-buffer (buffer-list)))
 
 (defadvice next-buffer (after avoid-messages-buffer-in-next-buffer)
   (when (or (string-match "^\\*scratch" (buffer-name))
