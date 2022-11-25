@@ -1,9 +1,8 @@
-;;; green-theme.el  -*- lexical-binding: t; -*-
-;;; Commentary:
-;;; Code:
+;;; green-theme.el
+;;; Dale Roberts <dale.o.roberts@gmail.com>
 
 (deftheme green
-  "Green monochrome monitor color theme.")
+  "Green monochrome color theme.")
 
 (let ((class '((class color) (min-colors 89)))
       (black "#000000")
